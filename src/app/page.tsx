@@ -38,25 +38,19 @@ export default function LoginPage() {
         </div>
       )}
 
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="relative hidden h-screen flex-1 items-center justify-center lg:flex">
-          <video
-            className="absolute h-full w-full object-cover"
-            src="https://videos.pexels.com/video-files/2002526/2002526-hd_1920_1080_25fps.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="relative z-10 text-white max-w-md text-center px-4">
-            <Logo className="h-20 w-20 mx-auto text-white" />
-            <h1 className="mt-6 text-5xl font-headline font-bold">Welcome to Uniportal</h1>
-            <p className="mt-4 text-lg font-body">Your all-in-one hub for academic success. Streamline your university life, from courses and schedules to AI-powered guidance.</p>
-          </div>
-        </div>
+      <div className="relative flex min-h-screen items-center justify-center bg-background">
+        <video
+          className="absolute top-0 left-0 h-full w-full object-cover -z-10"
+          src="https://videos.pexels.com/video-files/2002526/2002526-hd_1920_1080_25fps.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+        <div className="absolute inset-0 bg-black/50 -z-10" />
+
         <div className="flex flex-1 items-center justify-center p-6 lg:p-8">
-          <Card className="w-full max-w-sm">
+          <Card className="w-full max-w-sm bg-background/80 backdrop-blur-sm">
             <CardHeader className="text-center">
               <div className="w-full flex justify-center mb-4">
                   <Logo className="h-12 w-12" />
@@ -105,7 +99,7 @@ export default function LoginPage() {
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                  <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-2">
