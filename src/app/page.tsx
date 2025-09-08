@@ -96,11 +96,9 @@ export default function LoginPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Link href="/dashboard" passHref legacyBehavior>
-                  <Button className="w-full" asChild>
-                    <a>LOGIN <ArrowRight className="ml-2" /></a>
-                  </Button>
-                </Link>
+                <Button className="w-full" asChild>
+                  <Link href="/dashboard">LOGIN <ArrowRight className="ml-2" /></Link>
+                </Button>
               </form>
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
