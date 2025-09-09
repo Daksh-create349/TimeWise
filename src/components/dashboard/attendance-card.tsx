@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { UserCheck } from "lucide-react";
@@ -38,11 +40,4 @@ export default function AttendanceCard() {
       </CardContent>
     </Card>
   );
-}
-
-// Custom indicator class for Progress
-const progressIndicatorVariants = (percentage: number) => {
-    if (percentage < 75) return 'bg-destructive';
-    if (percentage < 90) return 'bg-yellow-500';
-    return 'bg-green-500';
 }
