@@ -108,11 +108,15 @@ export default function LoginPage() {
                     Sign in with Google
                 </Button>
                 <div className="grid grid-cols-2 gap-2">
-                    <Button variant="outline">
+                    <Button variant="outline" asChild>
+                      <Link href="/dashboard">
                         <BookUser className="mr-2" /> Student Login
+                      </Link>
                     </Button>
-                    <Button variant="outline">
+                    <Button variant="outline" asChild>
+                      <Link href="/dashboard">
                         <Shield className="mr-2" /> Staff Login
+                      </Link>
                     </Button>
                 </div>
               </div>
