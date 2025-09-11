@@ -1,23 +1,16 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AiCourseSuggestionOutput } from "@/ai/ai-course-suggestion";
 import { Book, GraduationCap, Lightbulb, Link as LinkIcon, Globe } from "lucide-react";
 
-interface Suggestion {
-  summary: string;
-  suggested_courses: { course_code: string; course_name: string; reason: string }[];
-  learning_resources: {
-    books: { title: string; author: string; reason: string }[];
-    websites: { name: string; url: string; reason:string }[];
-  };
-  study_strategies: string[];
-}
-
-export default function AiSuggestionResult({ suggestions }: { suggestions: Suggestion }) {
+export default function AiSuggestionResult({ suggestions }: { suggestions: AiCourseSuggestionOutput }) {
+  const { courses, resources, studyStrategies, summary } = suggestions.suggestions;
+  
   return (
     <Card className="border-primary/50 border-2 bg-secondary/30">
         <CardHeader>
             <CardTitle className="font-headline text-xl">Your Personalized Suggestions</CardTitle>
-            <CardDescription>{suggestions.summary}</CardDescription>
+            <CardDescription>{summary}</CardDescription>
         </CardHeader>
         <CardContent>
             <Accordion type="multiple" defaultValue={['courses', 'resources', 'strategies']} className="w-full">
@@ -29,11 +22,10 @@ export default function AiSuggestionResult({ suggestions }: { suggestions: Sugge
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="pl-4">
-                       <ul className="space-y-4">
-                         {suggestions.suggested_courses.map(course => (
-                            <li key={course.course_code}>
-                                <p className="font-semibold">{course.course_name} ({course.course_code})</p>
-                                <p className="text-sm text-muted-foreground">{course.reason}</p>
+                       <ul className="space-y-4 list-disc list-inside">
+                         {courses.map((course, index) => (
+                            <li key={index}>
+                                {course}
                             </li>
                          ))}
                        </ul>
@@ -47,30 +39,13 @@ export default function AiSuggestionResult({ suggestions }: { suggestions: Sugge
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="pl-4 space-y-4">
-                        <div>
-                            <h4 className="font-semibold mb-2 flex items-center gap-2"><Book className="h-4 w-4"/>Books</h4>
-                            <ul className="space-y-3 list-disc list-inside">
-                                {suggestions.learning_resources.books.map(book => (
-                                    <li key={book.title}>
-                                        <span className="font-semibold">{book.title}</span> by {book.author}
-                                        <p className="text-sm text-muted-foreground pl-4">{book.reason}</p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-2 flex items-center gap-2"><Globe className="h-4 w-4"/>Websites</h4>
-                            <ul className="space-y-3 list-disc list-inside">
-                                {suggestions.learning_resources.websites.map(site => (
-                                     <li key={site.name}>
-                                        <a href={site.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline flex items-center gap-1">
-                                            {site.name} <LinkIcon className="h-3 w-3" />
-                                        </a>
-                                        <p className="text-sm text-muted-foreground pl-4">{site.reason}</p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        <ul className="space-y-3 list-disc list-inside">
+                            {resources.map((resource, index) => (
+                                <li key={index}>
+                                    {resource}
+                                </li>
+                            ))}
+                        </ul>
                     </AccordionContent>
                 </AccordionItem>
                  <AccordionItem value="strategies">
@@ -82,7 +57,7 @@ export default function AiSuggestionResult({ suggestions }: { suggestions: Sugge
                     </AccordionTrigger>
                     <AccordionContent className="pl-4">
                         <ul className="space-y-2 list-decimal list-inside">
-                            {suggestions.study_strategies.map((strategy, index) => (
+                            {studyStrategies.map((strategy, index) => (
                                 <li key={index}>{strategy}</li>
                             ))}
                         </ul>
