@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { LogOut, User, CreditCard, Settings, Monitor, Sun, Moon } from "lucide-react"
 import { useTheme } from "next-themes";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface UserNavProps {
     isSidebar?: boolean;
@@ -26,9 +26,14 @@ interface UserNavProps {
 export function UserNav({ isSidebar = false }: UserNavProps) {
   const { setTheme } = useTheme();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const name = searchParams.get('name') || "Alex Johnson";
   const fallback = name.split(' ').map(n => n[0]).join('');
   const email = name.toLowerCase().replace(' ', '.') + "@university.edu";
+
+  const handleLogout = () => {
+    router.push('/');
+  };
 
   const triggerContent = (
     <>
@@ -101,7 +106,7 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
           </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>
