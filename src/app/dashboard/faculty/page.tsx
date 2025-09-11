@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { BookOpen, Briefcase, Calendar, Clock, GraduationCap, Mail, Phone, Users } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import UpcomingEventsCard from "@/components/dashboard/faculty/upcoming-events-card";
 
 const facultyProfile = {
     name: "Dr. Evelyn Reed",
@@ -58,33 +59,37 @@ export default function FacultyDashboardPage() {
             </CardContent>
         </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle className="font-headline flex items-center gap-2">
-                    <Calendar className="w-6 h-6" /> Today's Schedule & Attendance
-                </CardTitle>
-                 <p className="text-sm text-muted-foreground">
-                    Toggle your availability for each class. Marking absent will notify students and prompt you to send a leave request.
-                </p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {schedule.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
-                        <div className="flex items-center gap-4">
-                            <div className="font-semibold text-primary w-20">{item.time}</div>
-                            <div>
-                                <p className="font-bold">{item.subject}</p>
-                                <p className="text-sm text-muted-foreground">{item.room} &middot; {item.students} students</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline flex items-center gap-2">
+                        <Calendar className="w-6 h-6" /> Today's Schedule & Attendance
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                        Toggle your availability for each class. Marking absent will notify students and prompt you to send a leave request.
+                    </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {schedule.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
+                            <div className="flex items-center gap-4">
+                                <div className="font-semibold text-primary w-20">{item.time}</div>
+                                <div>
+                                    <p className="font-bold">{item.subject}</p>
+                                    <p className="text-sm text-muted-foreground">{item.room} &middot; {item.students} students</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Label htmlFor={`attendance-${index}`} className="text-sm font-medium text-green-600">Present</Label>
+                                <Switch id={`attendance-${index}`} defaultChecked/>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Label htmlFor={`attendance-${index}`} className="text-sm font-medium text-green-600">Present</Label>
-                            <Switch id={`attendance-${index}`} defaultChecked/>
-                        </div>
-                    </div>
-                ))}
-            </CardContent>
-        </Card>
+                    ))}
+                </CardContent>
+            </Card>
+
+            <UpcomingEventsCard />
+        </div>
       </div>
   );
 }

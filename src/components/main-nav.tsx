@@ -17,6 +17,7 @@ import {
   Users,
   BookCheck,
   BarChart3,
+  Bell,
 } from 'lucide-react';
 
 import {
@@ -57,6 +58,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/faculty/user-management', label: 'User Management', icon: Users },
     { href: '/dashboard/faculty/assignments', label: 'Assignments', icon: FileText },
     { href: '/dashboard/faculty/timetable', label: 'AI Timetable', icon: Calendar },
+    { href: '/dashboard/faculty/notifications', label: 'Notifications', icon: Bell },
     { href: '/dashboard/faculty/reports', label: 'Reports', icon: BarChart3 },
     { href: '/dashboard/faculty/profile', label: 'Profile', icon: User },
   ];
