@@ -1,9 +1,13 @@
+
+"use client";
+
 import AssignmentsCard from "@/components/dashboard/assignments-card";
+import { AssignmentProvider } from "@/context/AssignmentContext";
 
 export default function AssignmentsPage() {
     return (
-        <div>
+        <AssignmentProvider>
             <AssignmentsCard />
-        </div>
+        </AssignmentProvider>
     )
 }

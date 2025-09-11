@@ -8,47 +8,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import UploadAssignmentDialog from "./upload-assignment-dialog";
-
-const initialUpcomingAssignments = [
-    { id: 1, title: "Problem Set 3", course: "Quantum Physics", dueDate: "in 2 days", status: "Due Soon" },
-    { id: 2, title: "Essay on Modernism", course: "Literature 201", dueDate: "in 5 days", status: "Upcoming" },
-    { id: 3, title: "Lab Report 4", course: "Organic Chemistry", dueDate: "in 1 week", status: "Upcoming" },
-];
-
-const initialSubmittedAssignments = [
-    { id: 4, title: "Calculus Midterm", course: "Advanced Calculus", submittedDate: "2 days ago", grade: "A-" },
-    { id: 5, title: "Project Proposal", course: "Data Structures", submittedDate: "5 days ago", grade: "Graded" },
-    { id: 6, title: "Weekly Quiz 5", course: "Quantum Physics", submittedDate: "1 week ago", grade: "B+" },
-];
-
-interface Assignment {
-  id: number;
-  title: string;
-  course: string;
-  dueDate?: string;
-  status?: string;
-  submittedDate?: string;
-  grade?: string;
-}
+import { useAssignments } from "@/context/AssignmentContext";
+import type { Assignment } from "@/context/AssignmentContext";
 
 export default function AssignmentsCard() {
-  const [upcomingAssignments, setUpcomingAssignments] = useState<Assignment[]>(initialUpcomingAssignments);
-  const [submittedAssignments, setSubmittedAssignments] = useState<Assignment[]>(initialSubmittedAssignments);
+  const { assignments, submittedAssignments, submitAssignment } = useAssignments();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
 
   const handleAssignmentSubmit = (submittedTitle: string) => {
     if (!selectedAssignment) return;
 
-    const newSubmittedAssignment: Assignment = {
-      ...selectedAssignment,
-      title: submittedTitle, 
-      submittedDate: "Just now",
-      grade: "Pending",
-    };
-
-    setSubmittedAssignments(prev => [newSubmittedAssignment, ...prev]);
-    setUpcomingAssignments(prev => prev.filter(a => a.id !== selectedAssignment.id));
+    submitAssignment(selectedAssignment.id, submittedTitle);
     
     setIsDialogOpen(false);
     setSelectedAssignment(null);
@@ -83,7 +54,7 @@ export default function AssignmentsCard() {
               <TabsTrigger value="submitted">Submitted</TabsTrigger>
             </TabsList>
             <TabsContent value="upcoming" className="mt-4 space-y-2">
-              {upcomingAssignments.map((item) => (
+              {assignments.map((item) => (
                 <div key={item.id} className="flex items-center justify-between p-3 rounded-md hover:bg-secondary/50">
                   <div>
                     <p className="font-semibold">{item.title}</p>
@@ -103,7 +74,7 @@ export default function AssignmentsCard() {
                   </div>
                 </div>
               ))}
-              {upcomingAssignments.length === 0 && (
+              {assignments.length === 0 && (
                 <div className="text-center text-muted-foreground p-4">
                     No upcoming assignments.
                 </div>

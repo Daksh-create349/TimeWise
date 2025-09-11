@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { AssignmentProvider } from '@/context/AssignmentContext';
 
 export const metadata: Metadata = {
   title: 'TimeWise',
@@ -28,7 +29,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AssignmentProvider>
+            {children}
+          </AssignmentProvider>
           <Toaster />
         </ThemeProvider>
       </body>

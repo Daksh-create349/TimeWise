@@ -54,7 +54,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
   const facultyMenuItems = [
     { href: '/dashboard/faculty', label: 'Dashboard', icon: Users, exact: true },
     { href: '/dashboard/faculty/profile', label: 'Profile', icon: User },
-    // { href: '/dashboard/faculty/courses', label: 'Courses', icon: BookOpen },
+    { href: '/dashboard/faculty/assignments', label: 'Assignments', icon: FileText },
   ];
 
   const menuItems = isFacultyPage ? facultyMenuItems : studentMenuItems;
