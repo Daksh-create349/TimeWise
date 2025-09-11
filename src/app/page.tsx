@@ -84,7 +84,6 @@ export default function LoginPage() {
                       </div>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="uni-a">State University</SelectItem>
                       <SelectItem value="uni-b">Metropolitan College</SelectItem>
                       <SelectItem value="uni-c">Institute of Technology</SelectItem>
                     </SelectContent>
