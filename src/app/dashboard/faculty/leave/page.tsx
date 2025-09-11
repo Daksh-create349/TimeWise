@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useRef, useState, useEffect } from "react";
 import { getLeaveRequestPreview } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -70,6 +70,12 @@ export default function ComposeLeaveRequestPage() {
   const [leaveType, setLeaveType] = useState<string | undefined>();
   const [date, setDate] = useState<DateRange | undefined>();
   const [proxy, setProxy] = useState<string | undefined>();
+  const [subject, setSubject] = useState("");
+
+  useEffect(() => {
+    setSubject(leaveType ? `Leave Request - ${leaveType}` : "");
+  }, [leaveType]);
+
 
    const handleFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +129,7 @@ export default function ComposeLeaveRequestPage() {
                         </div>
                          <div className="grid grid-cols-5 items-center">
                             <Label className="text-muted-foreground col-span-1">Subject</Label>
-                            <Input name="subject" value={`Leave Request - ${leaveType || '...'}`} readOnly className="col-span-4 bg-muted/50 border-none"/>
+                            <Input name="subject" value={subject} onChange={(e) => setSubject(e.target.value)} className="col-span-4 bg-muted/50 border-none"/>
                         </div>
                     </CardContent>
                 </Card>
@@ -238,7 +244,7 @@ export default function ComposeLeaveRequestPage() {
                     <div className="border rounded-lg p-4 space-y-4 min-h-[400px]">
                         <p><span className="font-semibold">To:</span> admin@university.edu</p>
                         <p><span className="font-semibold">CC:</span> department.head@university.edu</p>
-                        <p><span className="font-semibold">Subject:</span> Leave Request - {leaveType || '...'}</p>
+                        <p><span className="font-semibold">Subject:</span> {subject || '...'}</p>
                         <hr/>
                         
                         {!state.data && !state.error && (
@@ -270,3 +276,4 @@ export default function ComposeLeaveRequestPage() {
     </div>
   );
 }
+ 
