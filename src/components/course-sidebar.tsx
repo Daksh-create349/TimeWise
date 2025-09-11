@@ -1,7 +1,6 @@
 
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { 
@@ -16,7 +15,7 @@ import {
     Target
 } from "lucide-react";
 
-const menuItems = [
+export const menuItems = [
     { name: "Basic Info", icon: Info },
     { name: "Syllabus", icon: BookCopy },
     { name: "Course Topics", icon: ClipboardList, default: true },
@@ -28,9 +27,12 @@ const menuItems = [
     { name: "Program Outcomes", icon: Target },
 ];
 
-export default function CourseSidebar() {
-    const [activeItem, setActiveItem] = useState("Course Topics");
+interface CourseSidebarProps {
+    activeItem: string;
+    setActiveItem: (item: string) => void;
+}
 
+export default function CourseSidebar({ activeItem, setActiveItem }: CourseSidebarProps) {
     return (
         <div className="space-y-2">
             {menuItems.map((item) => (
