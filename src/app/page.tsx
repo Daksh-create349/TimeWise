@@ -10,10 +10,10 @@ export default function PortalPage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-8">
       <div className="text-center mb-16">
         <div className="mx-auto mb-4 p-2 inline-block">
-          <Image src="/timewise-logo.png" alt="Timewise logo" width={120} height={120} className="rounded-full" />
+          <Image src="/timewise-logo.png" alt="TimeWise logo" width={120} height={120} className="rounded-full" />
         </div>
         <h1 className="text-6xl font-bold text-foreground font-headline">
-          Timewise
+          TimeWise
         </h1>
         <p className="text-lg text-primary mt-4">
           AI-Powered Learning & Assessments - Smarter, Faster, Engaging
