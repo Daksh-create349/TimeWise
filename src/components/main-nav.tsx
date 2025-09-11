@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { UserNav } from './user-nav';
+import Logo from './logo';
 
 interface MainNavProps {
   isMobile?: boolean;
@@ -39,6 +40,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     <>
       <SidebarHeader>
         <div className="flex items-center gap-2">
+          <Logo />
           <span className="text-xl font-headline font-semibold">TimeWise</span>
         </div>
       </SidebarHeader>
