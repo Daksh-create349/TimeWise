@@ -49,9 +49,7 @@ const prompt = ai.definePrompt({
   - A professional and clean layout with a simple border.
   - Do not include any logos or seals that you have to invent.
   `,
-  config: {
-    model: 'googleai/imagen-4.0-fast-generate-001',
-  },
+  model: 'googleai/imagen-4.0-fast-generate-001',
 });
 
 const generateReceiptFlow = ai.defineFlow(
