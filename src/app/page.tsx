@@ -10,14 +10,11 @@ export default function PortalPage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-8">
       <div className="text-center mb-16">
         <div className="mx-auto mb-4 p-2 inline-block">
-          <Image src="/timewise-logo.png" alt="Time wise logo" width={120} height={120} className="rounded-full" />
+          <Image src="/timewise-logo.png" alt="Timewise logo" width={120} height={120} className="rounded-full" />
         </div>
         <h1 className="text-6xl font-bold text-foreground font-headline">
-          Time wise
+          Timewise
         </h1>
-        <p className="text-4xl text-muted-foreground mt-2">
-          Attendance Platform
-        </p>
         <p className="text-lg text-primary mt-4">
           AI-Powered Learning & Assessments - Smarter, Faster, Engaging
         </p>
@@ -26,7 +23,7 @@ export default function PortalPage() {
         <PortalCard
           title="Students"
           href="/login/student"
-          imageUrl="https://i.pinimg.com/736x/8b/85/e6/8b85e627bc90a5336114a407dff9b6f3.jpg"
+          imageUrl="https://i.pinimg.com/736x/8b/85/e6/8b85e627bc90a_5336114a407dff9b6f3.jpg"
           imageHint="university students"
         />
         <PortalCard
