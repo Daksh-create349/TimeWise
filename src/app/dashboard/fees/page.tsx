@@ -6,22 +6,22 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Download, ExternalLink, Receipt } from "lucide-react";
 
 const feeSummary = {
-  totalOutstanding: 5250.00,
+  totalOutstanding: 525000.00,
   nextDueDate: "2024-09-01",
 };
 
 const feeBreakdown = [
-  { id: 1, description: "Semester Tuition Fee", amount: 4500.00, status: "Outstanding" },
-  { id: 2, description: "Library Fee", amount: 150.00, status: "Outstanding" },
-  { id: 3, description: "Lab & Technology Fee", amount: 300.00, status: "Outstanding" },
-  { id: 4, description: "Student Activity Fee", amount: 50.00, status: "Outstanding" },
-  { id: 5, description: "Health & Wellness Fee", amount: 250.00, status: "Outstanding" },
+  { id: 1, description: "Semester Tuition Fee", amount: 450000.00, status: "Outstanding" },
+  { id: 2, description: "Library Fee", amount: 15000.00, status: "Outstanding" },
+  { id: 3, description: "Lab & Technology Fee", amount: 30000.00, status: "Outstanding" },
+  { id: 4, description: "Student Activity Fee", amount: 5000.00, status: "Outstanding" },
+  { id: 5, description: "Health & Wellness Fee", amount: 25000.00, status: "Outstanding" },
 ];
 
 const paymentHistory = [
-    { id: "TXN1001", date: "2024-01-15", description: "Spring Semester Fees", amount: 5250.00, method: "Online Transfer" },
-    { id: "TXN1002", date: "2023-08-20", description: "Fall Semester Fees", amount: 5150.00, method: "Credit Card" },
-    { id: "TXN1003", date: "2023-01-12", description: "Spring Semester Fees", amount: 5150.00, method: "Online Transfer" },
+    { id: "TXN1001", date: "2024-01-15", description: "Spring Semester Fees", amount: 525000.00, method: "Online Transfer" },
+    { id: "TXN1002", date: "2023-08-20", description: "Fall Semester Fees", amount: 515000.00, method: "Credit Card" },
+    { id: "TXN1003", date: "2023-01-12", description: "Spring Semester Fees", amount: 515000.00, method: "Online Transfer" },
 ];
 
 
@@ -48,7 +48,7 @@ export default function FeesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <p className="text-4xl font-bold text-primary">₹{feeSummary.totalOutstanding.toFixed(2)}</p>
+            <p className="text-4xl font-bold text-primary">₹{new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)}</p>
             <p className="text-sm text-primary/80 mt-1">
               Next payment due on {new Date(feeSummary.nextDueDate).toLocaleDateString()}
             </p>
@@ -79,7 +79,7 @@ export default function FeesPage() {
                     {feeBreakdown.map((item) => (
                         <TableRow key={item.id}>
                         <TableCell className="font-medium">{item.description}</TableCell>
-                        <TableCell className="text-right font-mono">₹{item.amount.toFixed(2)}</TableCell>
+                        <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(item.amount)}</TableCell>
                         <TableCell className="text-right">
                             <Badge variant={item.status === 'Paid' ? 'secondary' : 'destructive'}>{item.status}</Badge>
                         </TableCell>
@@ -91,7 +91,7 @@ export default function FeesPage() {
                 <CardFooter className="justify-end border-t pt-4">
                      <div className="flex items-center gap-4 text-right">
                         <span className="text-muted-foreground">Total</span>
-                        <span className="text-xl font-bold">₹{feeSummary.totalOutstanding.toFixed(2)}</span>
+                        <span className="text-xl font-bold">₹{new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)}</span>
                     </div>
                 </CardFooter>
             </Card>
@@ -123,7 +123,7 @@ export default function FeesPage() {
                   <TableCell>{payment.date}</TableCell>
                   <TableCell className="font-medium">{payment.description}</TableCell>
                   <TableCell>{payment.method}</TableCell>
-                  <TableCell className="text-right font-mono">₹{payment.amount.toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(payment.amount)}</TableCell>
                   <TableCell className="text-center">
                     <Button variant="outline" size="icon">
                       <Download className="h-4 w-4" />
