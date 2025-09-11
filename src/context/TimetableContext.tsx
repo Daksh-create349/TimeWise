@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 
 type SubjectInfo = {
   subject: string;
-  teacher: string;
+  teacher?: string;
 };
 
 type DaySchedule = {
@@ -41,11 +41,11 @@ const initialSchedule: Schedule = {
     Friday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed" },
   },
   "12:30 - 14:00": {
-    Monday: { subject: "Break", teacher: "" },
-    Tuesday: { subject: "Break", teacher: "" },
-    Wednesday: { subject: "Break", teacher: "" },
-    Thursday: { subject: "Break", teacher: "" },
-    Friday: { subject: "Break", teacher: "" },
+    Monday: { subject: "Break" },
+    Tuesday: { subject: "Break" },
+    Wednesday: { subject: "Break" },
+    Thursday: { subject: "Break" },
+    Friday: { subject: "Break" },
   },
   "14:00 - 15:30": {
     Monday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed" },
@@ -71,9 +71,10 @@ export const TimetableProvider = ({ children }: { children: ReactNode }) => {
     const today = format(new Date(), 'EEEE'); // e.g., "Monday"
     const now = new Date();
 
-    if (!Object.values(schedule).length) return [];
+    if (!Object.keys(schedule).length) return [];
 
     const todaysClasses = Object.entries(schedule).map(([time, daySchedule]) => {
+      // @ts-ignore
       const classInfo = daySchedule[today];
       if (!classInfo || classInfo.subject === "Break") return null;
 
