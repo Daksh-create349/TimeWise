@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, CheckCircle } from "lucide-react";
+import { FileText, CheckCircle, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const upcomingAssignments = [
     { id: 1, title: "Problem Set 3", course: "Quantum Physics", dueDate: "in 2 days", status: "Due Soon" },
@@ -18,7 +19,7 @@ const submittedAssignments = [
 export default function AssignmentsCard() {
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
          <div className="flex items-center gap-2">
             <FileText className="h-6 w-6" />
             <div>
@@ -26,6 +27,10 @@ export default function AssignmentsCard() {
               <CardDescription>Your upcoming and submitted work.</CardDescription>
             </div>
         </div>
+        <Button>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Assignment
+        </Button>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="upcoming">
