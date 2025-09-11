@@ -1,11 +1,17 @@
 "use server";
 
 import { aiCourseSuggestion } from "@/ai/ai-course-suggestion";
+import type { AiCourseSuggestionOutput } from "@/ai/ai-course-suggestion";
+
+export interface AiSuggesterState {
+  data: AiCourseSuggestionOutput | null;
+  error: string | null;
+}
 
 export async function getCourseSuggestions(
-  prevState: any,
+  prevState: AiSuggesterState,
   formData: FormData
-) {
+): Promise<AiSuggesterState> {
   const topic = formData.get("topic");
 
   if (!topic || typeof topic !== "string" || topic.length < 10) {

@@ -27,18 +27,6 @@ const AiCourseSuggestionOutputSchema = z.object({
 });
 export type AiCourseSuggestionOutput = z.infer<typeof AiCourseSuggestionOutputSchema>;
 
-const shouldIncludePerformanceDataTool = ai.defineTool({
-  name: 'shouldIncludePerformanceData',
-  description: 'Determines whether student performance data should be included in the course suggestion prompt.',
-  inputSchema: z.object({
-    topic: z.string().describe('The course topic or project idea.'),
-  }),
-  outputSchema: z.boolean().describe('A boolean indicating whether to include student performance data (true) or not (false).'),
-}, async (input) => {
-  // In a real application, this would use a more sophisticated method to determine
-  // if performance data is relevant.
-  return input.topic.length > 5; // Example: Include performance data if the topic is relatively descriptive.
-});
 
 export async function aiCourseSuggestion(input: AiCourseSuggestionInput): Promise<AiCourseSuggestionOutput> {
   return aiCourseSuggestionFlow(input);
@@ -48,12 +36,11 @@ const prompt = ai.definePrompt({
   name: 'aiCourseSuggestionPrompt',
   input: {schema: AiCourseSuggestionInputSchema},
   output: {schema: AiCourseSuggestionOutputSchema},
-  tools: [shouldIncludePerformanceDataTool],
   prompt: `You are an expert academic advisor. Analyze the student's interests and provide personalized suggestions for courses, learning resources, and actionable study strategies.
 
   Course Topic/Project Idea: {{{topic}}}
 
-  {{#if (shouldIncludePerformanceDataTool topic)}}
+  {{#if studentPerformanceData}}
   Student Performance Data: {{{studentPerformanceData}}}
   Based on the student's performance data, provide specific recommendations tailored to their strengths and weaknesses.
   {{else}}
@@ -90,11 +77,7 @@ const aiCourseSuggestionFlow = ai.defineFlow(
     outputSchema: AiCourseSuggestionOutputSchema,
   },
   async input => {
-    const shouldIncludeData = await shouldIncludePerformanceDataTool(input);
-    const promptInput = shouldIncludeData ? input : { ...input, studentPerformanceData: undefined };
-
-    const {output} = await prompt(promptInput);
+    const {output} = await prompt(input);
     return output!;
   }
 );
-

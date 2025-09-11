@@ -1,7 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AiCourseSuggestionOutput } from "@/ai/ai-course-suggestion";
-import { Book, GraduationCap, Lightbulb, Link as LinkIcon, Globe } from "lucide-react";
+import { Book, GraduationCap, Lightbulb } from "lucide-react";
 
 export default function AiSuggestionResult({ suggestions }: { suggestions: AiCourseSuggestionOutput }) {
   const { courses, resources, studyStrategies, summary } = suggestions.suggestions;
@@ -22,7 +22,7 @@ export default function AiSuggestionResult({ suggestions }: { suggestions: AiCou
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="pl-4">
-                       <ul className="space-y-4 list-disc list-inside">
+                       <ul className="space-y-2 list-disc list-inside">
                          {courses.map((course, index) => (
                             <li key={index}>
                                 {course}
@@ -38,8 +38,8 @@ export default function AiSuggestionResult({ suggestions }: { suggestions: AiCou
                            <span className="font-semibold">Learning Resources</span>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent className="pl-4 space-y-4">
-                        <ul className="space-y-3 list-disc list-inside">
+                    <AccordionContent className="pl-4 space-y-2">
+                        <ul className="space-y-2 list-disc list-inside">
                             {resources.map((resource, index) => (
                                 <li key={index}>
                                     {resource}
