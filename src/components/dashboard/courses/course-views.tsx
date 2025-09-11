@@ -506,7 +506,3 @@ export function CourseOutcomesView({ courseName, isProgramOutcomes = false }: { 
         </Card>
     );
 }
-
-    
-
-    
