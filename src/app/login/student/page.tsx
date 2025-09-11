@@ -26,12 +26,12 @@ export default function StudentLoginPage() {
             
             <Card className="overflow-hidden rounded-xl shadow-lg">
                 <Image
-                  src="https://picsum.photos/seed/student-studying/800/600"
-                  alt="Student studying in a library"
+                  src="https://i.pinimg.com/736x/8b/85/e6/8b85e627bc90a5336114a407dff9b6f3.jpg"
+                  alt="University students walking on campus"
                   width={800}
                   height={600}
                   className="object-cover"
-                  data-ai-hint="student studying library"
+                  data-ai-hint="university students"
                 />
             </Card>
 
