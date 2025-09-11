@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -21,6 +22,7 @@ export default function AttendanceCard() {
     .filter(c => c.subject !== "Break")
     .map(c => ({
       subject: c.subject,
+      time: c.time,
       percentage: presentStudents.includes(c.subject) ? 100 : 74, // Mock base attendance
     }));
 
@@ -40,7 +42,7 @@ export default function AttendanceCard() {
         {attendanceData.length > 0 ? (
           <div className="space-y-6">
             {attendanceData.map((item) => (
-              <div key={item.subject}>
+              <div key={`${item.subject}-${item.time}`}>
                 <div className="flex justify-between items-center mb-1">
                   <p className="text-sm font-medium">{item.subject}</p>
                   <p className={`text-sm font-bold ${item.percentage < 80 ? 'text-destructive' : 'text-foreground'}`}>
@@ -61,3 +63,4 @@ export default function AttendanceCard() {
     </Card>
   );
 }
+
