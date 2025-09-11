@@ -24,18 +24,27 @@ const DayScheduleSchema = z.object({
 });
 
 const TimetableDaySchema = z.object({
-    Monday: DayScheduleSchema,
-    Tuesday: DayScheduleSchema,
-    Wednesday: DayScheduleSchema,
-    Thursday: DayScheduleSchema,
-    Friday: DayScheduleSchema,
+  Monday: DayScheduleSchema,
+  Tuesday: DayScheduleSchema,
+  Wednesday: DayScheduleSchema,
+  Thursday: DayScheduleSchema,
+  Friday: DayScheduleSchema,
 });
 
-const TimetableSchema = z.record(z.string(), TimetableDaySchema);
+const TimetableSchema = z.object({
+  '9:00 AM': TimetableDaySchema,
+  '10:00 AM': TimetableDaySchema,
+  '11:00 AM': TimetableDaySchema,
+  '12:00 PM': TimetableDaySchema,
+  '1:00 PM': TimetableDaySchema,
+  '2:00 PM': TimetableDaySchema,
+  '3:00 PM': TimetableDaySchema,
+  '4:00 PM': TimetableDaySchema,
+});
 
 
 const GenerateTimetableOutputSchema = z.object({
-  schedule: TimetableSchema.describe("The generated weekly timetable. The top-level keys should be time slots (e.g., '9:00 AM'), and the values should be an object with keys for each day of the week ('Monday' through 'Friday')."),
+  schedule: TimetableSchema.describe("The generated weekly timetable. The top-level keys should be the 8 fixed time slots, and the values should be an object with keys for each day of the week ('Monday' through 'Friday')."),
 });
 export type GenerateTimetableOutput = z.infer<typeof GenerateTimetableOutputSchema>;
 
@@ -72,7 +81,7 @@ const prompt = ai.definePrompt({
   5.  Ensure a logical flow and a balanced workload for both students and faculty.
   6.  Adhere to all user-provided constraints strictly.
   
-  Generate the timetable and provide the output in the specified JSON format. The top-level keys of the 'schedule' object must be the time slots.`,
+  Generate the timetable and provide the output in the specified JSON format. The top-level keys of the 'schedule' object must be the 8 fixed time slots.`,
 });
 
 const generateTimetableFlow = ai.defineFlow(
