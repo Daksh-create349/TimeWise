@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI agent that suggests learning resources for a specific course topic.
@@ -34,6 +35,48 @@ const GenerateTopicSuggestionsOutputSchema = z.object({
 });
 export type GenerateTopicSuggestionsOutput = z.infer<typeof GenerateTopicSuggestionsOutputSchema>;
 
+// Tool to search YouTube. In a real app, this would use the YouTube API.
+// Here we simulate it with a fixed result for a known topic.
+const searchYouTube = ai.defineTool(
+  {
+    name: 'searchYouTube',
+    description: 'Search for relevant educational videos on YouTube for a given topic.',
+    inputSchema: z.object({ query: z.string() }),
+    outputSchema: z.array(
+      z.object({
+        title: z.string(),
+        url: z.string().url(),
+        description: z.string(),
+      })
+    ),
+  },
+  async ({ query }) => {
+    console.log(`Searching YouTube for: ${query}`);
+    // Simulate a real API call for a specific topic
+    if (query.toLowerCase().includes('data structures')) {
+      return [
+        {
+          title: 'Data Structures & Algorithms #1 - What Are Data Structures?',
+          url: 'https://www.youtube.com/watch?v=bum_19loj9A',
+          description: 'A great introduction to the fundamental concepts of data structures by Programiz.',
+        },
+        {
+          title: 'Data Structures Easy to Advanced Course - Full Tutorial from a Google Engineer',
+          url: 'https://www.youtube.com/watch?v=RBSGKlAcr1E',
+          description: 'A comprehensive, in-depth tutorial from freeCodeCamp, suitable for all levels.',
+        },
+        {
+            title: 'Top 6 Coding Interview Concepts (Data Structures & Algorithms)',
+            url: 'https://www.youtube.com/watch?v=r1MXwyiGi_w',
+            description: 'Focuses on the most common data structure concepts that appear in technical interviews.'
+        }
+      ];
+    }
+    // Return an empty array if the topic is not the one we have a real video for
+    return [];
+  }
+);
+
 export async function generateTopicSuggestions(input: GenerateTopicSuggestionsInput): Promise<GenerateTopicSuggestionsOutput> {
   return generateTopicSuggestionsFlow(input);
 }
@@ -42,9 +85,10 @@ const prompt = ai.definePrompt({
   name: 'generateTopicSuggestionsPrompt',
   input: {schema: GenerateTopicSuggestionsInputSchema},
   output: {schema: GenerateTopicSuggestionsOutputSchema},
+  tools: [searchYouTube],
   prompt: `You are an expert educator and curriculum designer. For the topic '{{{topic}}}' within the course '{{{courseTitle}}}', please provide the following learning resources:
 
-1.  **YouTube Suggestions:** Find 3-4 highly relevant and reputable educational videos on YouTube that explain this topic clearly. For each video, provide its title, URL, and a brief one-sentence summary of why it's a good resource.
+1.  **YouTube Suggestions:** Use the 'searchYouTube' tool to find 3-4 highly relevant and reputable educational videos that explain this topic clearly. If the tool returns no results, state that you could not find any videos.
 
 2.  **Quiz:** Create a short, high-quality quiz of 3-5 multiple-choice questions to test understanding of the topic. For each question, provide the question text, an array of 4 options, and the correct answer.
 
