@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Clock } from "lucide-react";
+import { Clock, UserCheck } from "lucide-react";
 import { useTimetable } from "@/context/TimetableContext";
 import { useEffect, useState } from "react";
 
@@ -33,7 +33,7 @@ export default function TimetableCard() {
             <TableRow>
               <TableHead>Time</TableHead>
               <TableHead>Subject</TableHead>
-              <TableHead>Room</TableHead>
+              <TableHead>Faculty</TableHead>
               <TableHead className="text-right">Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -42,7 +42,17 @@ export default function TimetableCard() {
               <TableRow key={`${item.time}-${item.subject}`}>
                 <TableCell className="font-medium">{item.time}</TableCell>
                 <TableCell>{item.subject}</TableCell>
-                <TableCell>{item.room}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1.5">
+                    {item.teacher}
+                    {item.isProxy && (
+                      <Badge variant="outline" className="text-xs text-blue-600 border-blue-600/30 bg-blue-500/10">
+                        <UserCheck className="w-3 h-3 mr-1" />
+                        Proxy
+                      </Badge>
+                    )}
+                  </div>
+                </TableCell>
                 <TableCell className="text-right">
                   <Badge variant={item.status === 'Ongoing' ? "destructive" : "secondary"}>
                     {item.status}

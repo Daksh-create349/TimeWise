@@ -23,6 +23,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { useFormStatus } from "react-dom";
+import { useTimetable } from "@/context/TimetableContext";
 
 
 const initialState = {
@@ -64,6 +65,7 @@ export default function ComposeLeaveRequestPage() {
   const [state, formAction] = useActionState(getLeaveRequestPreview, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
+  const { assignProxy } = useTimetable();
 
   const [leaveType, setLeaveType] = useState<string | undefined>();
   const [date, setDate] = useState<DateRange | undefined>();
@@ -71,10 +73,18 @@ export default function ComposeLeaveRequestPage() {
 
    const handleFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-        title: "Leave Request Sent",
-        description: "Your leave request has been successfully sent for approval.",
-    });
+    if (proxy && date?.from && date?.to) {
+        assignProxy("Dr. Evelyn Reed", proxy, date.from, date.to);
+        toast({
+            title: "Proxy Assigned & Timetable Updated",
+            description: `${proxy} will now cover Dr. Evelyn Reed's classes. The student timetable has been updated.`,
+        });
+    } else {
+        toast({
+            title: "Leave Request Sent",
+            description: "Your leave request has been successfully sent for approval.",
+        });
+    }
     formRef.current?.reset();
     setDate(undefined);
     setLeaveType(undefined);
@@ -259,5 +269,3 @@ export default function ComposeLeaveRequestPage() {
     </div>
   );
 }
-
-    

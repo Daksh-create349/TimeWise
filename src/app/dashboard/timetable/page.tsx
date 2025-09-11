@@ -3,10 +3,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download, Printer } from "lucide-react";
+import { Download, Printer, UserCheck } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { useTimetable } from "@/context/TimetableContext";
+import { Badge } from "@/components/ui/badge";
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
@@ -43,8 +44,12 @@ export default function TimetablePage() {
                 <tr key={time} className="border-b">
                   <td className="p-3 font-medium text-muted-foreground">{time}</td>
                   {days.map((day) => {
-                    const cell = schedule[time][day];
+                    const cell = schedule[time]?.[day];
+                    if (!cell) return <td key={`${time}-${day}`} className="p-3"></td>;
+
                     const isBreak = cell.subject === "Break";
+                    const isProxy = !!cell.originalTeacher;
+
                     return (
                       <td key={`${time}-${day}`} className={`p-3 ${isBreak ? 'bg-amber-100 dark:bg-amber-900/50' : ''}`}>
                         {isBreak ? (
@@ -52,7 +57,15 @@ export default function TimetablePage() {
                         ) : (
                           <div>
                             <p className="font-semibold">{cell.subject}</p>
-                            <p className="text-sm text-muted-foreground">{cell.teacher}</p>
+                            <div className="text-sm text-muted-foreground flex items-center justify-center gap-1.5">
+                              <span>{cell.teacher}</span>
+                              {isProxy && (
+                                <Badge variant="outline" className="text-xs text-blue-600 border-blue-600/30 bg-blue-500/10">
+                                  <UserCheck className="w-3 h-3 mr-1" />
+                                  Proxy
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         )}
                       </td>

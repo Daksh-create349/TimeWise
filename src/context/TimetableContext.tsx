@@ -2,11 +2,12 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-import { format } from 'date-fns';
+import { format, eachDayOfInterval } from 'date-fns';
 
 type SubjectInfo = {
   subject: string;
   teacher?: string;
+  originalTeacher?: string;
 };
 
 type DaySchedule = {
@@ -23,6 +24,7 @@ interface TimetableContextType {
   getTodaysSchedule: () => any[];
   absentClasses: string[];
   toggleAbsence: (subject: string) => void;
+  assignProxy: (originalTeacher: string, proxyTeacher: string, startDate: Date, endDate: Date) => void;
 }
 
 const TimetableContext = createContext<TimetableContextType | undefined>(undefined);
@@ -92,6 +94,8 @@ export const TimetableProvider = ({ children }: { children: ReactNode }) => {
       return {
         time: time,
         subject: classInfo.subject,
+        teacher: classInfo.teacher,
+        isProxy: !!classInfo.originalTeacher,
         room: `Room ${(Math.floor(Math.random() * 3) + 1)}0${Math.floor(Math.random() * 9) + 1}`,
         status: status
       };
@@ -107,10 +111,33 @@ export const TimetableProvider = ({ children }: { children: ReactNode }) => {
         : [...prev, subject]
     );
   };
+  
+  const assignProxy = (originalTeacher: string, proxyTeacher: string, startDate: Date, endDate: Date) => {
+    const datesToUpdate = eachDayOfInterval({ start: startDate, end: endDate });
+
+    setSchedule(currentSchedule => {
+        const newSchedule = JSON.parse(JSON.stringify(currentSchedule));
+
+        for (const date of datesToUpdate) {
+            const dayOfWeek = format(date, 'EEEE'); // e.g., "Monday"
+            
+            for (const time in newSchedule) {
+                if (newSchedule[time][dayOfWeek] && newSchedule[time][dayOfWeek].teacher === originalTeacher) {
+                    newSchedule[time][dayOfWeek] = {
+                        ...newSchedule[time][dayOfWeek],
+                        teacher: proxyTeacher,
+                        originalTeacher: originalTeacher,
+                    };
+                }
+            }
+        }
+        return newSchedule;
+    });
+  }
 
 
   return (
-    <TimetableContext.Provider value={{ schedule, setSchedule, getTodaysSchedule, absentClasses, toggleAbsence }}>
+    <TimetableContext.Provider value={{ schedule, setSchedule, getTodaysSchedule, absentClasses, toggleAbsence, assignProxy }}>
       {children}
     </TimetableContext.Provider>
   );
