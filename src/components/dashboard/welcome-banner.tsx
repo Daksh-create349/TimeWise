@@ -1,12 +1,15 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useTimetable } from "@/context/TimetableContext";
 
 export default function WelcomeBanner() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const isFaculty = pathname.startsWith('/dashboard/faculty');
+  const { batches } = useTimetable();
 
   const studentName = searchParams.get('name') || "Alex Johnson";
   const facultyName = "Dr. Evelyn Reed";
@@ -38,7 +41,7 @@ export default function WelcomeBanner() {
             <div className="text-sm text-muted-foreground flex items-center gap-4">
                 <span>Roll: CS2023001</span>
                 <span className="h-4 border-l"></span>
-                <span>Batch: Computer Science 2023</span>
+                <span>Batch: {batches.length > 0 ? batches[0] : 'Computer Science 2023'}</span>
             </div>
         )}
       </div>

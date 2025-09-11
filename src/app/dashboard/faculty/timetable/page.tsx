@@ -21,7 +21,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, PlusCircle, Sparkles, Trash2, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useTimetable, Schedule } from '@/context/TimetableContext';
+import { useTimetable } from '@/context/TimetableContext';
+import type { BatchTimetables } from '@/context/TimetableContext';
 import TimetableDisplay from '@/components/dashboard/faculty/timetable-display';
 import { generateTimetableAction } from './actions';
 
@@ -29,6 +30,7 @@ import { generateTimetableAction } from './actions';
 const formSchema = z.object({
   subjects: z.array(z.object({ value: z.string().min(2, "Subject must be at least 2 characters.") })).min(1, "Please add at least one subject."),
   faculty: z.array(z.object({ value: z.string().min(2, "Faculty name must be at least 2 characters.") })).min(1, "Please add at least one faculty member."),
+  batches: z.array(z.object({ value: z.string().min(2, "Batch name must be at least 2 characters.") })).min(1, "Please add at least one batch."),
   constraints: z.string().optional(),
 });
 
@@ -36,15 +38,16 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function GenerateTimetablePage() {
   const { toast } = useToast();
-  const { setSchedule } = useTimetable();
+  const { setSchedule, setBatches } = useTimetable();
   const [isLoading, setIsLoading] = useState(false);
-  const [generatedSchedule, setGeneratedSchedule] = useState<Schedule | null>(null);
+  const [generatedSchedules, setGeneratedSchedules] = useState<BatchTimetables | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       subjects: [{ value: 'Mathematics' }, { value: 'Physics' }, { value: 'English' }, { value: 'Computer Science' }, { value: 'Biology' }, { value: 'History' }],
       faculty: [{ value: 'Dr. Evelyn Reed' }, { value: 'Prof. Samuel Chen' }, { value: 'Dr. Maria Garcia' }, { value: 'Prof. Ben Carter' }, { value: 'Dr. Aisha Khan' }],
+      batches: [{ value: 'Computer Science 2023' }, { value: 'Mathematics 2023' }],
       constraints: "No classes on Friday afternoons. Dr. Evelyn Reed prefers morning classes.",
     },
   });
@@ -59,18 +62,24 @@ export default function GenerateTimetablePage() {
     name: "faculty",
   });
 
+   const { fields: batchFields, append: appendBatch, remove: removeBatch } = useFieldArray({
+    control: form.control,
+    name: "batches",
+  });
+
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
-    setGeneratedSchedule(null);
+    setGeneratedSchedules(null);
     toast({
-      title: "Generating Timetable with AI...",
-      description: "Our AI is creating a new schedule. This may take a moment.",
+      title: "Generating Timetables with AI...",
+      description: "Our AI is creating new schedules. This may take a moment.",
     });
 
     try {
         const input = {
             subjects: data.subjects.map(s => s.value),
             faculty: data.faculty.map(f => f.value),
+            batches: data.batches.map(b => b.value),
             constraints: data.constraints,
         };
         
@@ -80,10 +89,10 @@ export default function GenerateTimetablePage() {
             throw new Error(result.error || "AI returned an unexpected response.");
         }
         
-        setGeneratedSchedule(result.data.schedule);
+        setGeneratedSchedules(result.data.schedules);
         toast({
-            title: "AI Timetable Generated!",
-            description: "The new weekly timetable has been successfully created by the AI.",
+            title: "AI Timetables Generated!",
+            description: "New weekly timetables have been successfully created by the AI.",
         });
 
     } catch (error: any) {
@@ -91,19 +100,22 @@ export default function GenerateTimetablePage() {
         toast({
             variant: "destructive",
             title: "AI Generation Failed",
-            description: error.message || "The AI could not generate a timetable. Please check your inputs or try again.",
+            description: error.message || "The AI could not generate timetables. Please check your inputs or try again.",
         });
     } finally {
         setIsLoading(false);
     }
   };
 
-  const handlePublish = () => {
-    if(generatedSchedule) {
-      setSchedule(generatedSchedule);
+  const handlePublish = (batchName: string, schedule: any) => {
+    if(schedule) {
+      setSchedule(schedule); // Set the main schedule to the selected batch's schedule for student view
+      if (generatedSchedules) {
+        setBatches(Object.keys(generatedSchedules));
+      }
       toast({
         title: "Timetable Published!",
-        description: "The new timetable is now live for all students.",
+        description: `The timetable for ${batchName} is now live for all students.`,
       });
     }
   }
@@ -117,7 +129,7 @@ export default function GenerateTimetablePage() {
                         <Settings className="h-8 w-8 text-primary" />
                         <div>
                         <CardTitle className="font-headline text-2xl">AI Timetable Generator</CardTitle>
-                        <CardDescription>Provide subjects, faculty, and constraints to create a weekly schedule.</CardDescription>
+                        <CardDescription>Provide inputs to create weekly schedules for multiple batches.</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
@@ -125,6 +137,35 @@ export default function GenerateTimetablePage() {
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         
+                        <div>
+                            <FormLabel>Batches</FormLabel>
+                            <FormDescription className="text-xs mb-2">List of student batches to schedule.</FormDescription>
+                             <div className="space-y-2">
+                                {batchFields.map((field, index) => (
+                                    <FormField
+                                    key={field.id}
+                                    control={form.control}
+                                    name={`batches.${index}.value`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex items-center gap-2">
+                                            <FormControl>
+                                                <Input {...field} placeholder="e.g., Computer Science 2023" />
+                                            </FormControl>
+                                            <Button type="button" variant="ghost" size="icon" onClick={() => removeBatch(index)}>
+                                                <Trash2 className="h-4 w-4 text-destructive"/>
+                                            </Button>
+                                        </FormItem>
+                                    )}
+                                    />
+                                ))}
+                            </div>
+                            <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => appendBatch({ value: '' })}>
+                                <PlusCircle className="mr-2 h-4 w-4" /> Add Batch
+                            </Button>
+                        </div>
+
+                        <Separator />
+
                         <div>
                             <FormLabel>Subjects</FormLabel>
                             <FormDescription className="text-xs mb-2">List of all subjects to be scheduled.</FormDescription>
@@ -221,7 +262,7 @@ export default function GenerateTimetablePage() {
             </Card>
         </div>
         <div className="md:col-span-2">
-            <TimetableDisplay schedule={generatedSchedule} onPublish={handlePublish} />
+            <TimetableDisplay schedules={generatedSchedules} onPublish={handlePublish} />
         </div>
     </div>
   );

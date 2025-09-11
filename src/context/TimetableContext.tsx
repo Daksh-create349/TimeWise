@@ -19,9 +19,16 @@ export type Schedule = {
   [time: string]: DaySchedule;
 };
 
+export type BatchTimetables = {
+  [batchName: string]: Schedule;
+};
+
+
 interface TimetableContextType {
   schedule: Schedule;
   setSchedule: (schedule: Schedule) => void;
+  batches: string[];
+  setBatches: (batches: string[]) => void;
   getTodaysSchedule: () => any[];
   absentClasses: string[];
   toggleAbsence: (subject: string) => void;
@@ -93,6 +100,7 @@ const initialSchedule: Schedule = {
 export const TimetableProvider = ({ children }: { children: ReactNode }) => {
   const [schedule, setSchedule] = useState<Schedule>(initialSchedule);
   const [absentClasses, setAbsentClasses] = useState<string[]>([]);
+  const [batches, setBatches] = useState<string[]>(['Computer Science 2023']);
 
   const getTodaysSchedule = useCallback(() => {
     const today = format(new Date(), 'EEEE'); // e.g., "Monday"
@@ -167,7 +175,7 @@ export const TimetableProvider = ({ children }: { children: ReactNode }) => {
 
 
   return (
-    <TimetableContext.Provider value={{ schedule, setSchedule, getTodaysSchedule, absentClasses, toggleAbsence, assignProxy }}>
+    <TimetableContext.Provider value={{ schedule, setSchedule, batches, setBatches, getTodaysSchedule, absentClasses, toggleAbsence, assignProxy }}>
       {children}
     </TimetableContext.Provider>
   );
