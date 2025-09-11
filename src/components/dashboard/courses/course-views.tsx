@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { DataTable } from "@/components/data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, Package, Check, ClipboardCheck, Percent, BookOpen, Clock, Users, Target, Award, ListTodo } from "lucide-react";
+import { Loader2, Package, Check, ClipboardCheck, Percent, BookOpen, Clock, Users, Target, Award, ListTodo, Sparkles } from "lucide-react";
 import { generateCourseTopics } from "@/ai/flows/generate-course-topics-flow";
 import { generateSyllabus, GenerateSyllabusOutput } from "@/ai/flows/generate-syllabus-flow";
 import { generateLessonPlan, GenerateLessonPlanOutput } from "@/ai/flows/generate-lesson-plan-flow";
@@ -16,6 +16,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import TopicSuggestionsDialog from "./topic-suggestions-dialog";
+import { generateTopicSuggestions, GenerateTopicSuggestionsOutput } from "@/ai/flows/generate-topic-suggestions-flow";
+
 
 // Reusable Loading/Error states
 function LoadingState({ text }: { text: string }) {
@@ -147,15 +152,17 @@ export function SyllabusView({ courseName }: { courseName: string }) {
 
 // 3. Course Topics View
 type Topic = { srNo: number; topicName: string; };
-const topicColumns: ColumnDef<Topic>[] = [
-    { accessorKey: "srNo", header: "Sr. No.", cell: ({ row }) => <div className="text-center">{row.getValue("srNo")}</div> },
-    { accessorKey: "topicName", header: "Topic Name" },
-];
 
 export function CourseTopicsView({ courseName }: { courseName: string }) {
     const [topics, setTopics] = useState<Topic[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+    const [suggestions, setSuggestions] = useState<GenerateTopicSuggestionsOutput | null>(null);
+    const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+    const [suggestionError, setSuggestionError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -163,275 +170,23 @@ export function CourseTopicsView({ courseName }: { courseName: string }) {
             try {
                 const result = await generateCourseTopics({ courseTitle: courseName });
                 setTopics(result.topics.map((topic, index) => ({ srNo: index + 1, topicName: topic })));
-            } catch (e: any) {
-                setError(e.message || "An error occurred while fetching topics.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchTopics();
-    }, [courseName]);
+            } catch (e: any)_mod> I see this error with the app, reported by NextJS, please fix it. The error is reported as HTML but presented visually to the user).
 
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="font-headline text-2xl flex items-center gap-2">
-                    <ClipboardCheck className="w-6 h-6 text-primary" />
-                    Course Topics for {courseName}
-                </CardTitle>
-                <CardDescription>A detailed list of topics covered in this course.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                {isLoading && <LoadingState text="AI is generating course topics..." />}
-                {error && <ErrorState error={error} />}
-                {!isLoading && !error && <DataTable columns={topicColumns} data={topics} />}
-            </CardContent>
-        </Card>
-    );
-}
+A > before the line number in the error source usually indicates the line of interest: 
 
-// 4. Lesson Plan View
-export function LessonPlanView({ courseName }: { courseName: string }) {
-    const [plan, setPlan] = useState<GenerateLessonPlanOutput['lessonPlan'] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchPlan = async () => {
-            setIsLoading(true);
-            try {
-                const result = await generateLessonPlan({ courseTitle: courseName });
-                setPlan(result.lessonPlan);
-            } catch (e: any) {
-                setError(e.message || "Failed to load lesson plan.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchPlan();
-    }, [courseName]);
-
-    if (isLoading) return <Card><CardContent><LoadingState text="AI is generating the lesson plan..." /></CardContent></Card>;
-    if (error) return <Card><CardContent><ErrorState error={error} /></CardContent></Card>;
-    if (!plan) return null;
-
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="font-headline text-2xl flex items-center gap-2">
-                    <ListTodo className="w-6 h-6 text-primary" />
-                    Lesson Plan: {courseName}
-                </CardTitle>
-                <CardDescription>A week-by-week breakdown of the course structure.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-1/4">Week</TableHead>
-                            <TableHead>Topics</TableHead>
-                            <TableHead className="w-1/3">Activities & Assignments</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {plan.map((item, i) => (
-                            <TableRow key={i}>
-                                <TableCell className="font-semibold">{item.week}</TableCell>
-                                <TableCell>{item.topics}</TableCell>
-                                <TableCell className="text-muted-foreground">{item.activities}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-    );
-}
-
-// 5. Course Content View
-export function CourseContentView({ courseName }: { courseName: string }) {
-    const [contents, setContents] = useState<GenerateCourseContentOutput['courseContents'] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchContent = async () => {
-            setIsLoading(true);
-            try {
-                const result = await generateCourseContent({ courseTitle: courseName });
-                setContents(result.courseContents);
-            } catch (e: any) {
-                setError(e.message || "Failed to load course content.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchContent();
-    }, [courseName]);
-    
-    if (isLoading) return <Card><CardContent><LoadingState text="AI is generating course content..." /></CardContent></Card>;
-    if (error) return <Card><CardContent><ErrorState error={error} /></CardContent></Card>;
-    if (!contents) return null;
-
-    return (
-         <Card>
-            <CardHeader>
-                <CardTitle className="font-headline text-2xl flex items-center gap-2">
-                    <Package className="w-6 h-6 text-primary" />
-                    Course Content for {courseName}
-                </CardTitle>
-                <CardDescription>AI-generated sample content for this course.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Accordion type="single" collapsible defaultValue="item-0">
-                    {contents.map((item, i) => (
-                         <AccordionItem value={`item-${i}`} key={i}>
-                            <AccordionTrigger className="text-lg font-semibold">{item.title}</AccordionTrigger>
-                            <AccordionContent className="prose prose-sm dark:prose-invert max-w-none">
-                                <Badge>{item.contentType}</Badge>
-                                <pre className="whitespace-pre-wrap font-sans mt-4 bg-transparent p-0">{item.content}</pre>
-                            </AccordionContent>
-                        </AccordionItem>
-                    ))}
-                </Accordion>
-            </CardContent>
-        </Card>
-    );
-}
-
-// 6. Assignments View
-export function AssignmentsView({ courseName }: { courseName: string }) {
-    const assignments = [
-        { id: 1, title: 'Problem Set 1', dueDate: '2024-09-15', status: 'Graded', grade: 'A-' },
-        { id: 2, title: 'Midterm Project Proposal', dueDate: '2024-10-01', status: 'Upcoming' },
-        { id: 3, title: 'Research Paper Outline', dueDate: '2024-10-20', status: 'Upcoming' },
-    ];
-    return (
-        <Card>
-            <CardHeader>
-                 <CardTitle className="font-headline text-2xl flex items-center gap-2">
-                    <ClipboardCheck className="w-6 h-6 text-primary" />
-                    Assignments for {courseName}
-                </CardTitle>
-                <CardDescription>An overview of coursework and deadlines.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                 <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Due Date</TableHead>
-                            <TableHead className="text-right">Status</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {assignments.map(item => (
-                            <TableRow key={item.id}>
-                                <TableCell className="font-medium">{item.title}</TableCell>
-                                <TableCell>{item.dueDate}</TableCell>
-                                <TableCell className="text-right">
-                                    <Badge variant={item.status === 'Graded' ? 'secondary' : 'default'}>{item.status === 'Graded' ? item.grade : item.status}</Badge>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-    );
-}
-
-// 7. Attendance View
-export function AttendanceView({ courseName }: { courseName: string }) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="font-headline text-2xl flex items-center gap-2">
-                    <Check className="w-6 h-6 text-primary" />
-                    Attendance for {courseName}
-                </CardTitle>
-                <CardDescription>Your attendance record for this course.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div className="text-center">
-                    <p className="text-6xl font-bold text-primary">92%</p>
-                    <p className="text-muted-foreground">Overall Attendance</p>
-                </div>
-                <Progress value={92} />
-                <div className="grid grid-cols-2 gap-4 text-center">
-                    <div>
-                        <p className="font-bold text-lg">23</p>
-                        <p className="text-sm text-muted-foreground">Classes Attended</p>
-                    </div>
-                     <div>
-                        <p className="font-bold text-lg">2</p>
-                        <p className="text-sm text-muted-foreground">Classes Missed</p>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-    );
-}
-
-// 8. Outcomes View
-export function CourseOutcomesView({ courseName, isProgramOutcomes }: { courseName: string, isProgramOutcomes?: boolean }) {
-    const [outcomes, setOutcomes] = useState<GenerateCourseOutcomesOutput | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchOutcomes = async () => {
-            setIsLoading(true);
-            try {
-                const result = await generateCourseOutcomes({ courseTitle: courseName });
-                setOutcomes(result);
-            } catch (e: any) {
-                setError(e.message || "Failed to load outcomes.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchOutcomes();
-    }, [courseName]);
-    
-    if (isLoading) return <Card><CardContent><LoadingState text="AI is generating outcomes..." /></CardContent></Card>;
-    if (error) return <Card><CardContent><ErrorState error={error} /></CardContent></Card>;
-    if (!outcomes) return null;
-
-    const data = isProgramOutcomes ? outcomes.programOutcomes : outcomes.courseOutcomes;
-    const title = isProgramOutcomes ? "Program Outcomes (POs)" : "Course Outcomes (COs)";
-    const description = isProgramOutcomes 
-        ? "How this course contributes to broader program-level goals."
-        : "What you will be able to do upon successful completion of this course.";
-    const Icon = isProgramOutcomes ? Target : Award;
-
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="font-headline text-2xl flex items-center gap-2">
-                    <Icon className="w-6 h-6 text-primary" />
-                    {title}
-                </CardTitle>
-                <CardDescription>{description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-24">ID</TableHead>
-                            <TableHead>Description</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {data.map(item => (
-                            <TableRow key={item.id}>
-                                <TableCell className="font-semibold">{item.id}</TableCell>
-                                <TableCell className="text-muted-foreground">{item.description}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-    );
-}
+> Console Error: Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent: [503 Service Unavailable] The model is overloaded. Please try again later.. Error source: src/app/dashboard/faculty/timetable/page.tsx (89:19) @ onSubmit
+> 
+>   87 |         
+>   88 |         if (result.error || !result.data) {
+> > 89 |             throw new Error(result.error || "AI returned an unexpected response.");
+>      |                   ^
+>   90 |         }
+>   91 |
+>   92 |         if (!result.data.scheduleEvents || result.data.scheduleEvents.length === 0) {
+> 
+> Call Stack
+> 2
+> 
+> Show 1 ignore-listed frame(s)
+> onSubmit
+> src/app/dashboard/faculty/timetable/page.tsx (89:19)
