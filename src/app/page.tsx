@@ -25,14 +25,21 @@ export default function PortalPage() {
   const backgroundStyle = {
     '--mouse-x': `${mousePosition.x}px`,
     '--mouse-y': `${mousePosition.y}px`,
-    backgroundImage: `radial-gradient(circle at var(--mouse-x) var(--mouse-y), hsla(204, 100%, 85%, 0.4), transparent 30%)`,
   };
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-8 bg-background">
+    <main 
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-8 bg-background"
+      style={backgroundStyle as React.CSSProperties}
+    >
       <div 
-        className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem] transition-all duration-300"
-        style={mousePosition.x === -1 ? {} : backgroundStyle}
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"
+      />
+      <div 
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full transition-colors duration-300"
+        style={{
+          backgroundImage: mousePosition.x > -1 ? 'radial-gradient(circle at var(--mouse-x) var(--mouse-y), hsla(204, 100%, 85%, 0.4), transparent 30%)' : 'none'
+        }}
       />
 
       <div className="text-center mb-16 z-10">
