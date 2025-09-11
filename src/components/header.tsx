@@ -14,7 +14,7 @@ export default function Header() {
             href="/dashboard"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
-            <Logo className="h-6 w-6 text-primary" />
+            <Logo className="h-8 w-8 text-primary" />
             <span className="sr-only">Uniportal</span>
             </Link>
         </nav>

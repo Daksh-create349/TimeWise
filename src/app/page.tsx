@@ -9,7 +9,9 @@ export default function PortalPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-8">
       <div className="text-center mb-16">
-        <Image src="/timewise-logo.png" alt="Time wise logo" width={128} height={128} className="mx-auto mb-4" />
+        <div className="mx-auto mb-4 bg-white rounded-full p-2 inline-block">
+          <Image src="/timewise-logo.png" alt="Time wise logo" width={120} height={120} className="rounded-full" />
+        </div>
         <h1 className="text-6xl font-bold text-foreground font-headline">
           Time wise
         </h1>
