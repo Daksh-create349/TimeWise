@@ -14,7 +14,7 @@ import {z} from 'genkit';
 const GenerateTimetableInputSchema = z.object({
   subjects: z.array(z.string()).describe('List of subjects to include in the timetable.'),
   faculty: z.array(z.string()).describe('List of available faculty members.'),
-  batches: z.array(z.string()).describe('List of student batches to generate timetables for.'),
+  batches: z.array(z.string()).describe('List of student batches to generate timetables for (up to 4).'),
   constraints: z.string().optional().describe('Any additional constraints or preferences for scheduling, e.g., "No classes on Friday afternoons", "Dr. Smith prefers morning classes".'),
 });
 export type GenerateTimetableInput = z.infer<typeof GenerateTimetableInputSchema>;
@@ -44,11 +44,13 @@ const TimetableSchema = z.object({
   '4:00 PM': TimetableDaySchema,
 });
 
-const BatchTimetableSchema = z.record(z.string(), TimetableSchema);
-
-
 const GenerateTimetableOutputSchema = z.object({
-  schedules: BatchTimetableSchema.describe("The generated weekly timetables for each batch. The top-level keys should be the batch names, and each value should be a complete timetable schedule for that batch."),
+  schedules: z.object({
+    batchOne: TimetableSchema.optional().describe("The generated weekly timetable for the first batch in the input list. The key should be the batch name."),
+    batchTwo: TimetableSchema.optional().describe("The generated weekly timetable for the second batch in the input list, if it exists. The key should be the batch name."),
+    batchThree: TimetableSchema.optional().describe("The generated weekly timetable for the third batch in the input list, if it exists. The key should be the batch name."),
+    batchFour: TimetableSchema.optional().describe("The generated weekly timetable for the fourth batch in the input list, if it exists. The key should be the batch name."),
+  }).describe("Contains the generated timetables. Each key (batchOne, batchTwo, etc.) should be an object where the key is the batch name and the value is the schedule."),
 });
 export type GenerateTimetableOutput = z.infer<typeof GenerateTimetableOutputSchema>;
 
@@ -91,7 +93,16 @@ const prompt = ai.definePrompt({
   6.  Ensure a logical flow and a balanced workload for both students and faculty.
   7.  Adhere to all user-provided constraints strictly.
   
-  Generate the timetables and provide the output in the specified JSON format. The top-level 'schedules' object must contain a key for each batch name provided in the input.`,
+  Generate the timetables and provide the output in the specified JSON format. For each batch provided in the input, place its timetable object inside the corresponding field: the first batch goes into 'batchOne', the second into 'batchTwo', and so on. The key for each of these nested objects should be the actual batch name.
+  
+  Example for a single batch "Computer Science 2023":
+  {
+    "schedules": {
+      "batchOne": {
+        "Computer Science 2023": { ...timetable object... }
+      }
+    }
+  }`,
 });
 
 const generateTimetableFlow = ai.defineFlow(

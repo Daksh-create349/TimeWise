@@ -30,7 +30,7 @@ import { generateTimetableAction } from './actions';
 const formSchema = z.object({
   subjects: z.array(z.object({ value: z.string().min(2, "Subject must be at least 2 characters.") })).min(1, "Please add at least one subject."),
   faculty: z.array(z.object({ value: z.string().min(2, "Faculty name must be at least 2 characters.") })).min(1, "Please add at least one faculty member."),
-  batches: z.array(z.object({ value: z.string().min(2, "Batch name must be at least 2 characters.") })).min(1, "Please add at least one batch."),
+  batches: z.array(z.object({ value: z.string().min(2, "Batch name must be at least 2 characters.") })).min(1, "Please add at least one batch.").max(4, "You can generate timetables for a maximum of 4 batches at a time."),
   constraints: z.string().optional(),
 });
 
@@ -84,12 +84,33 @@ export default function GenerateTimetablePage() {
         };
         
         const result = await generateTimetableAction(input);
-
+        
         if (result.error || !result.data) {
             throw new Error(result.error || "AI returned an unexpected response.");
         }
         
-        setGeneratedSchedules(result.data.schedules);
+        // Transform the AI output to the format expected by the UI
+        const transformedSchedules: BatchTimetables = {};
+        const rawSchedules = result.data.schedules;
+        
+        // The AI returns objects like { batchOne: { 'Batch Name': schedule } }
+        // We need to flatten this.
+        Object.values(rawSchedules).forEach(batchObject => {
+            if (batchObject) {
+                const batchName = Object.keys(batchObject)[0];
+                const schedule = Object.values(batchObject)[0];
+                if (batchName && schedule) {
+                    transformedSchedules[batchName] = schedule;
+                }
+            }
+        });
+
+
+        if (Object.keys(transformedSchedules).length === 0) {
+            throw new Error("AI did not return any valid schedules. Please try again.");
+        }
+
+        setGeneratedSchedules(transformedSchedules);
         toast({
             title: "AI Timetables Generated!",
             description: "New weekly timetables have been successfully created by the AI.",
@@ -138,27 +159,36 @@ export default function GenerateTimetablePage() {
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         
                         <div>
-                            <FormLabel>Batches</FormLabel>
-                            <FormDescription className="text-xs mb-2">List of student batches to schedule.</FormDescription>
-                             <div className="space-y-2">
-                                {batchFields.map((field, index) => (
-                                    <FormField
-                                    key={field.id}
-                                    control={form.control}
-                                    name={`batches.${index}.value`}
-                                    render={({ field }) => (
-                                        <FormItem className="flex items-center gap-2">
-                                            <FormControl>
-                                                <Input {...field} placeholder="e.g., Computer Science 2023" />
-                                            </FormControl>
-                                            <Button type="button" variant="ghost" size="icon" onClick={() => removeBatch(index)}>
-                                                <Trash2 className="h-4 w-4 text-destructive"/>
-                                            </Button>
-                                        </FormItem>
-                                    )}
-                                    />
-                                ))}
-                            </div>
+                            <FormField
+                                control={form.control}
+                                name="batches"
+                                render={() => (
+                                    <FormItem>
+                                        <FormLabel>Batches</FormLabel>
+                                        <FormDescription className="text-xs mb-2">List of student batches to schedule (max 4).</FormDescription>
+                                        <div className="space-y-2">
+                                            {batchFields.map((field, index) => (
+                                                <FormField
+                                                key={field.id}
+                                                control={form.control}
+                                                name={`batches.${index}.value`}
+                                                render={({ field }) => (
+                                                    <FormItem className="flex items-center gap-2">
+                                                        <FormControl>
+                                                            <Input {...field} placeholder="e.g., Computer Science 2023" />
+                                                        </FormControl>
+                                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeBatch(index)}>
+                                                            <Trash2 className="h-4 w-4 text-destructive"/>
+                                                        </Button>
+                                                    </FormItem>
+                                                )}
+                                                />
+                                            ))}
+                                        </div>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => appendBatch({ value: '' })}>
                                 <PlusCircle className="mr-2 h-4 w-4" /> Add Batch
                             </Button>
