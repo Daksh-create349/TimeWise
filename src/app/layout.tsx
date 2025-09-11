@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { AssignmentProvider } from '@/context/AssignmentContext';
 import { TimetableProvider } from '@/context/TimetableContext';
 import { AttendanceProvider } from '@/context/AttendanceContext';
+import Logo from '@/components/logo';
 
 export const metadata: Metadata = {
   title: 'TimeWise',
@@ -25,6 +26,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
+        <div className="splash-screen">
+          <div className="flex flex-col items-center justify-center gap-4 text-primary">
+            <Logo className="h-24 w-24" />
+            <h1 className="text-5xl font-bold font-headline splash-title opacity-0">TimeWise</h1>
+          </div>
+        </div>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
