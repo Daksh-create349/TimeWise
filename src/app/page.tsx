@@ -8,8 +8,8 @@ export default function PortalPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-8">
       <div className="text-center mb-16">
-        <div className="flex justify-center items-center gap-4 mb-4">
-          <Logo />
+        <div className="flex flex-col justify-center items-center gap-4 mb-4">
+          <Logo className="h-24 w-24" />
           <h1 className="text-6xl font-bold text-foreground font-headline">
             TimeWise
           </h1>
