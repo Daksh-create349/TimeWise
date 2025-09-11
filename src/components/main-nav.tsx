@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
-  BotMessageSquare,
   User,
   BookOpen,
   Settings,
@@ -35,7 +34,6 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/timetable', label: 'Timetable', icon: Calendar },
     { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
     { href: '/dashboard/assignments', label: 'Assignments', icon: FileText },
-    { href: '/dashboard/ai-suggester', label: 'AI Suggester', icon: BotMessageSquare },
     { href: '/dashboard/profile', label: 'Profile', icon: User },
   ];
 
