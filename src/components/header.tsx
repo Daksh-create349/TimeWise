@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import MainNav from "./main-nav";
 import { UserNav } from "./user-nav";
-import Logo from "./logo";
 
 export default function Header() {
   return (
@@ -14,8 +13,7 @@ export default function Header() {
             href="/dashboard"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
-            <Logo />
-            <span className="sr-only">TimeWise</span>
+            <span className="font-headline font-semibold">TimeWise</span>
             </Link>
         </nav>
         <Sheet>
