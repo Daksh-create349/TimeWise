@@ -71,7 +71,7 @@ export default function UpcomingEventsCard() {
                 ))}
             </CardContent>
             <CardFooter className="border-t pt-4">
-                <Link href="#" className="w-full">
+                <Link href="/dashboard/faculty/calendar" className="w-full">
                     <Button variant="ghost" className="w-full text-primary hover:text-primary">
                         View Full Calendar
                     </Button>
