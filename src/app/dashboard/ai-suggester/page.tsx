@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react-dom";
 import { getCourseSuggestions } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -34,7 +34,7 @@ function SubmitButton() {
 }
 
 export default function AiSuggesterPage() {
-  const [state, formAction] = useFormState(getCourseSuggestions, initialState);
+  const [state, formAction] = useActionState(getCourseSuggestions, initialState);
 
   return (
     <div className="max-w-3xl mx-auto">
