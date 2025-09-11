@@ -26,8 +26,11 @@ export default function PortalPage() {
             TimeWise
           </h1>
         </div>
+        <p className="text-2xl font-semibold text-white mt-2">
+          Smarter Schedules, Stronger Outcomes
+        </p>
         <p className="text-lg text-primary mt-4">
-          AI-Powered Learning & Assessments - Smarter, Faster, Engaging
+          AI-Powered Learning & Assessments - Faster & More Engaging
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl z-10">
