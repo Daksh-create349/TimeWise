@@ -23,7 +23,7 @@ import {
   SidebarFooter,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/cn';
 import { UserNav } from './user-nav';
 import Logo from './logo';
 
