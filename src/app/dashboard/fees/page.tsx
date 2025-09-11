@@ -1,9 +1,12 @@
 
+"use client";
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Download, ExternalLink, Receipt } from "lucide-react";
+import { CreditCard, Download, ExternalLink } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const feeSummary = {
   totalOutstanding: 525000.00,
@@ -26,6 +29,15 @@ const paymentHistory = [
 
 
 export default function FeesPage() {
+  const { toast } = useToast();
+
+  const handleDownload = (transactionId: string) => {
+    toast({
+      title: "Downloading Receipt",
+      description: `Your receipt for transaction ${transactionId} is downloading.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -125,7 +137,7 @@ export default function FeesPage() {
                   <TableCell>{payment.method}</TableCell>
                   <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(payment.amount)}</TableCell>
                   <TableCell className="text-center">
-                    <Button variant="outline" size="icon">
+                    <Button variant="outline" size="icon" onClick={() => handleDownload(payment.id)}>
                       <Download className="h-4 w-4" />
                     </Button>
                   </TableCell>
