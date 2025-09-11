@@ -108,7 +108,7 @@ export default function TimetablePage() {
           </table>
         </div>
         <div className="flex justify-end items-center mt-6 gap-4">
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => window.print()}>
                 <Printer className="mr-2 h-4 w-4" />
                 Print Schedule
             </Button>
