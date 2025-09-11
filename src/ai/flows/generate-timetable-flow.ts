@@ -89,6 +89,7 @@ const generateTimetableFlow = ai.defineFlow(
     name: 'generateTimetableFlow',
     inputSchema: GenerateTimetableInputSchema,
     outputSchema: GenerateTimetableOutputSchema,
+    retries: 2,
   },
   async (input) => {
     const {output} = await prompt(input);
