@@ -13,14 +13,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { generateReceipt, GenerateReceiptInput } from "@/ai/flows/generate-receipt-flow";
 import { useSearchParams } from "next/navigation";
 import PaymentDialog from "@/components/dashboard/payment-dialog";
+import { add } from "date-fns";
 
-
-const feeSummary = {
+const initialFeeSummary = {
   totalOutstanding: 525000.00,
   nextDueDate: "2024-09-01",
 };
 
-const feeBreakdown = [
+const initialFeeBreakdown = [
   { id: 1, description: "Semester Tuition Fee", amount: 450000.00, status: "Outstanding" },
   { id: 2, description: "Library Fee", amount: 15000.00, status: "Outstanding" },
   { id: 3, description: "Lab & Technology Fee", amount: 30000.00, status: "Outstanding" },
@@ -28,13 +28,13 @@ const feeBreakdown = [
   { id: 5, description: "Health & Wellness Fee", amount: 25000.00, status: "Outstanding" },
 ];
 
-const paymentHistory = [
+const initialPaymentHistory = [
     { id: "TXN1001", date: "2024-01-15", description: "Spring Semester Fees", amount: 525000.00, method: "Online Transfer" },
     { id: "TXN1002", date: "2023-08-20", description: "Fall Semester Fees", amount: 515000.00, method: "Credit Card" },
     { id: "TXN1003", date: "2023-01-12", description: "Spring Semester Fees", amount: 515000.00, method: "Online Transfer" },
 ];
 
-type PaymentHistory = typeof paymentHistory[0];
+type PaymentHistory = typeof initialPaymentHistory[0];
 
 export default function FeesPage() {
   const { toast } = useToast();
@@ -46,6 +46,11 @@ export default function FeesPage() {
   const [generatedReceipt, setGeneratedReceipt] = useState<string | null>(null);
   const [isReceiptDialogOpen, setIsReceiptDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+
+  const [feeSummary, setFeeSummary] = useState(initialFeeSummary);
+  const [feeBreakdown, setFeeBreakdown] = useState(initialFeeBreakdown);
+  const [paymentHistory, setPaymentHistory] = useState(initialPaymentHistory);
+
 
   const handleDownload = async (payment: PaymentHistory) => {
     setIsLoading(true);
@@ -87,10 +92,31 @@ export default function FeesPage() {
     });
 
     setTimeout(() => {
+        const amountPaid = feeSummary.totalOutstanding;
         toast({
             title: "Payment Successful!",
-            description: `Successfully paid ₹${new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)} via ${method}.`,
+            description: `Successfully paid ₹${new Intl.NumberFormat('en-IN').format(amountPaid)} via ${method}.`,
         });
+
+        // Add to payment history
+        const newPayment: PaymentHistory = {
+            id: `TXN${Math.floor(Math.random() * 9000) + 1000}`,
+            date: new Date().toISOString().split('T')[0],
+            description: "Fall Semester Fees",
+            amount: amountPaid,
+            method: method,
+        };
+        setPaymentHistory([newPayment, ...paymentHistory]);
+        
+        // Update fee breakdown
+        setFeeBreakdown(feeBreakdown.map(item => ({ ...item, status: 'Paid' })));
+
+        // Update summary
+        setFeeSummary({
+            totalOutstanding: 0.00,
+            nextDueDate: add(new Date(feeSummary.nextDueDate), { months: 6 }).toISOString().split('T')[0],
+        });
+
     }, 2000);
   };
 
@@ -119,17 +145,21 @@ export default function FeesPage() {
             </CardHeader>
             <CardContent className="text-center">
                 <p className="text-4xl font-bold text-primary">₹{new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)}</p>
-                <p className="text-sm text-primary/80 mt-1">
-                Next payment due on <DueDate date={feeSummary.nextDueDate} />
-                </p>
+                {feeSummary.totalOutstanding > 0 && (
+                    <p className="text-sm text-primary/80 mt-1">
+                        Next payment due on <DueDate date={feeSummary.nextDueDate} />
+                    </p>
+                )}
             </CardContent>
-            <CardFooter>
-                <DialogTrigger asChild>
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                        Pay Now <ExternalLink className="ml-2 h-4 w-4" />
-                    </Button>
-                </DialogTrigger>
-            </CardFooter>
+            {feeSummary.totalOutstanding > 0 && (
+                <CardFooter>
+                    <DialogTrigger asChild>
+                        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                            Pay Now <ExternalLink className="ml-2 h-4 w-4" />
+                        </Button>
+                    </DialogTrigger>
+                </CardFooter>
+            )}
             </Card>
 
             <div className="md:col-span-2 space-y-6">
@@ -153,7 +183,7 @@ export default function FeesPage() {
                             <TableCell className="font-medium">{item.description}</TableCell>
                             <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(item.amount)}</TableCell>
                             <TableCell className="text-right">
-                                <Badge variant={item.status === 'Paid' ? 'secondary' : 'destructive'}>{item.status}</Badge>
+                                <Badge variant={item.status === 'Paid' ? 'secondary' : 'destructive'} className={item.status === 'Paid' ? 'bg-green-600/10 text-green-700 border-green-600/20' : ''}>{item.status}</Badge>
                             </TableCell>
                             </TableRow>
                         ))}
@@ -196,7 +226,7 @@ export default function FeesPage() {
               {paymentHistory.map((payment) => (
                 <TableRow key={payment.id}>
                   <TableCell className="font-mono text-muted-foreground">{payment.id}</TableCell>
-                  <TableCell>{payment.date}</TableCell>
+                  <TableCell>{new Date(payment.date).toLocaleDateString()}</TableCell>
                   <TableCell className="font-medium">{payment.description}</TableCell>
                   <TableCell>{payment.method}</TableCell>
                   <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(payment.amount)}</TableCell>
