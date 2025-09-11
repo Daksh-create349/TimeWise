@@ -39,7 +39,7 @@ export default function TimetableCard() {
           </TableHeader>
           <TableBody>
             {schedule.map((item) => (
-              <TableRow key={item.subject}>
+              <TableRow key={`${item.time}-${item.subject}`}>
                 <TableCell className="font-medium">{item.time}</TableCell>
                 <TableCell>{item.subject}</TableCell>
                 <TableCell>{item.room}</TableCell>
