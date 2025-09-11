@@ -19,7 +19,7 @@ export async function generateTimetableAction(
 
   try {
     const result = await generateTimetable(input);
-    if (!result?.schedules) {
+    if (!result?.scheduleEvents) {
       return { data: null, error: "The AI returned an unexpected response. Please try again." };
     }
     return { data: result, error: null };
