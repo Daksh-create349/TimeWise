@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Sparkles, Youtube, HelpCircle, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 
 interface TopicSuggestionsDialogProps {
   topicName: string;
