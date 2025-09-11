@@ -81,11 +81,17 @@ export default function GenerateTimetablePage() {
             throw new Error(result.error || "AI returned an unexpected response.");
         }
         
-        if (!result.data.schedule || Object.keys(result.data.schedule).length === 0) {
+        if (!result.data.schedule || result.data.schedule.length === 0) {
           throw new Error("AI did not return a valid schedule. Please check your inputs and try again.");
         }
+
+        const formattedSchedule: Schedule = result.data.schedule.reduce((acc: Schedule, timeSlot) => {
+          const { time, ...days } = timeSlot;
+          acc[time] = days;
+          return acc;
+        }, {});
         
-        setGeneratedSchedule(result.data.schedule);
+        setGeneratedSchedule(formattedSchedule);
         toast({
             title: "AI Timetable Generated!",
             description: "A new weekly timetable has been successfully created by the AI.",

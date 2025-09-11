@@ -27,7 +27,8 @@ const ScheduledEventSchema = z.object({
     room: z.string().optional().describe("The classroom or location assigned."),
 });
 
-const DayScheduleSchema = z.object({
+const TimeSlotSchema = z.object({
+    time: z.string().describe("The time slot, e.g., '9:00 AM'."),
     Monday: ScheduledEventSchema.optional(),
     Tuesday: ScheduledEventSchema.optional(),
     Wednesday: ScheduledEventSchema.optional(),
@@ -36,7 +37,7 @@ const DayScheduleSchema = z.object({
 });
 
 const GenerateTimetableOutputSchema = z.object({
-  schedule: z.record(z.string(), DayScheduleSchema).describe("The generated weekly timetable schedule as a JSON object. The keys are time slots (e.g., '9:00 AM') and values are objects with days of the week as keys."),
+  schedule: z.array(TimeSlotSchema).describe("The generated weekly timetable schedule as an array of time slot objects."),
 });
 export type GenerateTimetableOutput = z.infer<typeof GenerateTimetableOutputSchema>;
 
@@ -51,7 +52,7 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateTimetableOutputSchema},
   prompt: `You are an expert university scheduler. Your task is to create a balanced and logical weekly timetable for a 5-day week (Monday to Friday) with 8 time slots per day: 9:00 AM, 10:00 AM, 11:00 AM, 12:00 PM, 1:00 PM, 2:00 PM, 3:00 PM, 4:00 PM.
 
-  Your output MUST be a JSON object with a single root key 'schedule'. The keys of this object should be time slots (e.g., "9:00 AM") and the values should be objects with the days of the week as keys.
+  Your output MUST be a JSON object with a single root key 'schedule'. The value for 'schedule' should be an ARRAY of objects, where each object represents a time slot.
 
   Available Subjects:
   {{#each subjects}}
