@@ -20,9 +20,12 @@ export async function getCourseSuggestions(
 
   try {
     const result = await aiCourseSuggestion({ topic: topic });
+    if (!result?.suggestions) {
+      return { data: null, error: "The AI returned an unexpected response. Please try again." };
+    }
     return { data: result, error: null };
   } catch(e: any) {
     console.error(e);
-    return { data: null, error: "There was an issue with the AI. Please try again later." };
+    return { data: null, error: e.message || "An unknown error occurred with the AI. Please try again later." };
   }
 }
