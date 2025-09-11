@@ -1,34 +1,41 @@
 
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Phone, Home, User, GraduationCap, Calendar, BookOpen, BarChart2, Edit } from "lucide-react";
 
-const studentProfile = {
-  personalInfo: {
-    name: "Alex Johnson",
-    studentId: "CS2023001",
-    email: "alex.j@university.edu",
-    phone: "+1 (555) 123-4567",
-    address: "123 University Lane, Scholarsville, 12345",
-  },
-  academicInfo: {
-    program: "B.Tech in Computer Science & Engineering",
-    batch: "2023-2027",
-    currentSemester: 3,
-    cgpa: "8.75 / 10.0",
-  },
-  enrolledCourses: [
-    { code: "CS201", name: "Data Structures" },
-    { code: "MA201", name: "Advanced Calculus" },
-    { code: "PH201", name: "Quantum Physics" },
-    { code: "HU201", name: "Professional Communication" },
-  ],
-};
-
-
 export default function ProfilePage() {
+  const searchParams = useSearchParams();
+  const name = searchParams.get('name') || "Alex Johnson";
+  const studentId = "CS2023001";
+  const email = name.toLowerCase().replace(/\s/g, '.') + "@university.edu";
+
+  const studentProfile = {
+    personalInfo: {
+      name: name,
+      studentId: studentId,
+      email: email,
+      phone: "+1 (555) 123-4567",
+      address: "123 University Lane, Scholarsville, 12345",
+    },
+    academicInfo: {
+      program: "B.Tech in Computer Science & Engineering",
+      batch: "2023-2027",
+      currentSemester: 3,
+      cgpa: "8.75 / 10.0",
+    },
+    enrolledCourses: [
+      { code: "CS201", name: "Data Structures" },
+      { code: "MA201", name: "Advanced Calculus" },
+      { code: "PH201", name: "Quantum Physics" },
+      { code: "HU201", name: "Professional Communication" },
+    ],
+  };
+
   const { personalInfo, academicInfo, enrolledCourses } = studentProfile;
 
   return (
@@ -51,7 +58,7 @@ export default function ProfilePage() {
           <Card className="text-center">
             <CardContent className="pt-6">
               <Avatar className="h-28 w-28 mx-auto mb-4 border-4 border-primary/50">
-                <AvatarImage src="https://picsum.photos/seed/aj/200/200" alt={personalInfo.name} data-ai-hint="student avatar" />
+                <AvatarImage src={`https://picsum.photos/seed/${name}/200/200`} alt={personalInfo.name} data-ai-hint="student avatar" />
                 <AvatarFallback>{personalInfo.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
               </Avatar>
               <h2 className="text-2xl font-bold font-headline">{personalInfo.name}</h2>

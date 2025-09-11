@@ -17,24 +17,29 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { LogOut, User, CreditCard, Settings, Monitor, Sun, Moon } from "lucide-react"
 import { useTheme } from "next-themes";
+import { useSearchParams } from "next/navigation";
 
 interface UserNavProps {
     isSidebar?: boolean;
 }
 
 export function UserNav({ isSidebar = false }: UserNavProps) {
-  const { setTheme } = useTheme()
+  const { setTheme } = useTheme();
+  const searchParams = useSearchParams();
+  const name = searchParams.get('name') || "Alex Johnson";
+  const fallback = name.split(' ').map(n => n[0]).join('');
+  const email = name.toLowerCase().replace(' ', '.') + "@university.edu";
 
   const triggerContent = (
     <>
         <Avatar className="h-8 w-8">
-            <AvatarImage src="https://picsum.photos/seed/aj/100/100" alt="@student" data-ai-hint="student avatar" />
-            <AvatarFallback>AJ</AvatarFallback>
+            <AvatarImage src={`https://picsum.photos/seed/${name}/100/100`} alt={name} data-ai-hint="student avatar" />
+            <AvatarFallback>{fallback}</AvatarFallback>
         </Avatar>
         {isSidebar && (
             <div className="text-left">
-                <p className="text-sm font-medium">Alex Johnson</p>
-                <p className="text-xs text-muted-foreground">alex.j@university.edu</p>
+                <p className="text-sm font-medium">{name}</p>
+                <p className="text-xs text-muted-foreground">{email}</p>
             </div>
         )}
     </>
@@ -56,9 +61,9 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Alex Johnson</p>
+            <p className="text-sm font-medium leading-none">{name}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              alex.j@university.edu
+              {email}
             </p>
           </div>
         </DropdownMenuLabel>

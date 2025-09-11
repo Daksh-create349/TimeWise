@@ -1,4 +1,7 @@
 
+"use client";
+
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, User, Mail, Lock } from 'lucide-react';
@@ -7,8 +10,21 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { useRouter } from 'next/navigation';
 
 export default function StudentLoginPage() {
+  const [name, setName] = useState('');
+  const router = useRouter();
+
+  const handleSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (name) {
+      params.append('name', name);
+    }
+    router.push(`/dashboard?${params.toString()}`);
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 lg:p-8">
       <div className="w-full max-w-6xl mx-auto">
@@ -50,7 +66,20 @@ export default function StudentLoginPage() {
                 <CardDescription>Enter your credentials to access your student dashboard</CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSignIn}>
+                  <div className="space-y-2">
+                    <Label htmlFor="full-name" className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Full Name
+                    </Label>
+                    <Input 
+                      id="full-name" 
+                      placeholder="Enter your full name" 
+                      required 
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="student-id" className="flex items-center gap-2">
                       <User className="w-4 h-4" />
@@ -83,11 +112,9 @@ export default function StudentLoginPage() {
                     </Link>
                   </div>
 
-                  <Link href="/dashboard" passHref>
-                    <Button type="submit" className="w-full font-semibold text-base py-6">
-                        Sign In to Dashboard
-                    </Button>
-                  </Link>
+                  <Button type="submit" className="w-full font-semibold text-base py-6">
+                      Sign In to Dashboard
+                  </Button>
 
                   <div className="text-center text-sm text-muted-foreground pt-4">
                     Don't have an account?{' '}
