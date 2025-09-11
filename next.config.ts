@@ -36,6 +36,12 @@ const nextConfig: NextConfig = {
         hostname: 'brandbow.com',
         port: '',
         pathname: '/**',
+      },
+       {
+        protocol: 'https',
+        hostname: 'api.qrserver.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
