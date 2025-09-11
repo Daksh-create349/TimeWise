@@ -8,6 +8,7 @@ type SubjectInfo = {
   subject: string;
   teacher?: string;
   originalTeacher?: string;
+  room?: string;
 };
 
 type DaySchedule = {
@@ -30,41 +31,62 @@ interface TimetableContextType {
 const TimetableContext = createContext<TimetableContextType | undefined>(undefined);
 
 const initialSchedule: Schedule = {
-  "09:00 - 10:30": {
-    Monday: { subject: "Advanced Calculus", teacher: "Dr. Smith" },
-    Tuesday: { subject: "Quantum Physics", teacher: "Prof. Johnson" },
-    Wednesday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed" },
-    Thursday: { subject: "Advanced Calculus", teacher: "Dr. Smith" },
-    Friday: { subject: "Quantum Physics", teacher: "Prof. Johnson" },
+  "9:00 AM": {
+    Monday: { subject: "Advanced Calculus", teacher: "Dr. Smith", room: "Room 201" },
+    Tuesday: { subject: "Quantum Physics", teacher: "Prof. Johnson", room: "Room 303" },
+    Wednesday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed", room: "Room 105" },
+    Thursday: { subject: "Advanced Calculus", teacher: "Dr. Smith", room: "Room 201" },
+    Friday: { subject: "Quantum Physics", teacher: "Prof. Johnson", room: "Room 303" },
   },
-  "11:00 - 12:30": {
-    Monday: { subject: "Quantum Physics", teacher: "Prof. Johnson" },
-    Tuesday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed" },
-    Wednesday: { subject: "Advanced Calculus", teacher: "Dr. Smith" },
-    Thursday: { subject: "Quantum Physics", teacher: "Prof. Johnson" },
-    Friday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed" },
+  "10:00 AM": {
+    Monday: { subject: "Quantum Physics", teacher: "Prof. Johnson", room: "Room 303" },
+    Tuesday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed", room: "Room 105" },
+    Wednesday: { subject: "Advanced Calculus", teacher: "Dr. Smith", room: "Room 201" },
+    Thursday: { subject: "Quantum Physics", teacher: "Prof. Johnson", room: "Room 303" },
+    Friday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed", room: "Room 105" },
   },
-  "12:30 - 14:00": {
+    "11:00 AM": {
+    Monday: { subject: "History", teacher: "Prof. Carter", room: "Room 112" },
+    Tuesday: { subject: "English", teacher: "Dr. Maria Garcia", room: "Room 208" },
+    Wednesday: { subject: "Biology", teacher: "Dr. Aisha Khan", room: "Lab 2" },
+    Thursday: { subject: "History", teacher: "Prof. Carter", room: "Room 112" },
+    Friday: { subject: "English", teacher: "Dr. Maria Garcia", room: "Room 208" },
+  },
+  "12:00 PM": {
     Monday: { subject: "Break" },
     Tuesday: { subject: "Break" },
     Wednesday: { subject: "Break" },
     Thursday: { subject: "Break" },
     Friday: { subject: "Break" },
   },
-  "14:00 - 15:30": {
-    Monday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed" },
-    Tuesday: { subject: "Advanced Calculus", teacher: "Dr. Smith" },
-    Wednesday: { subject: "Quantum Physics", teacher: "Prof. Johnson" },
-    Thursday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed" },
-    Friday: { subject: "Advanced Calculus", teacher: "Dr. Smith" },
+  "1:00 PM": {
+    Monday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed", room: "Room 105" },
+    Tuesday: { subject: "Advanced Calculus", teacher: "Dr. Smith", room: "Room 201" },
+    Wednesday: { subject: "Quantum Physics", teacher: "Prof. Johnson", room: "Room 303" },
+    Thursday: { subject: "Data Structures", teacher: "Dr. Evelyn Reed", room: "Room 105" },
+    Friday: { subject: "Advanced Calculus", teacher: "Dr. Smith", room: "Room 201" },
   },
-   "16:00 - 17:00": {
-    Monday: { subject: "University Choir Practice", teacher: "Mr. Davis" },
-    Tuesday: { subject: "Debate Club", teacher: "Ms. Wallace" },
-    Wednesday: { subject: "Robotics Club", teacher: "Dr. Chen" },
-    Thursday: { subject: "Photography Club", teacher: "Ms. Anya" },
-    Friday: { subject: "Guest Lecture", teacher: "Dr. Kenji" },
+   "2:00 PM": {
+    Monday: { subject: "University Choir Practice", teacher: "Mr. Davis", room: "Music Hall" },
+    Tuesday: { subject: "Debate Club", teacher: "Ms. Wallace", room: "Auditorium" },
+    Wednesday: { subject: "Robotics Club", teacher: "Dr. Chen", room: "Engg. Lab" },
+    Thursday: { subject: "Photography Club", teacher: "Ms. Anya", room: "Art Studio" },
+    Friday: { subject: "Guest Lecture", teacher: "Dr. Kenji", room: "Hall 7" },
   },
+  "3:00 PM": {
+    Monday: { subject: "Biology", teacher: "Dr. Aisha Khan", room: "Lab 2" },
+    Tuesday: { subject: "History", teacher: "Prof. Carter", room: "Room 112" },
+    Wednesday: { subject: "English", teacher: "Dr. Maria Garcia", room: "Room 208" },
+    Thursday: { subject: "Biology", teacher: "Dr. Aisha Khan", room: "Lab 2" },
+    Friday: { subject: "History", teacher: "Prof. Carter", room: "Room 112" },
+  },
+  "4:00 PM": {
+    Monday: { subject: "English", teacher: "Dr. Maria Garcia", room: "Room 208" },
+    Tuesday: { subject: "Biology", teacher: "Dr. Aisha Khan", room: "Lab 2" },
+    Wednesday: { subject: "History", teacher: "Prof. Carter", room: "Room 112" },
+    Thursday: { subject: "English", teacher: "Dr. Maria Garcia", room: "Room 208" },
+    Friday: { subject: "Break" },
+  }
 };
 
 
@@ -79,24 +101,32 @@ export const TimetableProvider = ({ children }: { children: ReactNode }) => {
     if (!Object.keys(schedule).length) return [];
 
     const todaysClasses = Object.entries(schedule).map(([time, daySchedule]) => {
-      // @ts-ignore
       const classInfo = daySchedule[today];
       if (!classInfo || classInfo.subject === "Break") return null;
 
       const [startTimeStr] = time.split(' - ');
-      const [startHour, startMinute] = startTimeStr.split(':').map(Number);
-      
-      const classStartTime = new Date();
-      classStartTime.setHours(startHour, startMinute, 0, 0);
+      const dateWithTime = new Date();
+      const timeParts = startTimeStr.match(/(\d+):(\d+)\s*(AM|PM)/);
 
-      const status = now >= classStartTime ? "Ongoing" : "Upcoming";
+      if (timeParts) {
+        let [_, hour, minute, ampm] = timeParts;
+        let hourNum = parseInt(hour, 10);
+        if (ampm === 'PM' && hourNum !== 12) hourNum += 12;
+        if (ampm === 'AM' && hourNum === 12) hourNum = 0;
+        dateWithTime.setHours(hourNum, parseInt(minute, 10), 0, 0);
+      } else {
+         const [hour, minute] = startTimeStr.split(':').map(Number);
+         dateWithTime.setHours(hour, minute, 0, 0);
+      }
+
+      const status = now >= dateWithTime ? "Ongoing" : "Upcoming";
 
       return {
         time: time,
         subject: classInfo.subject,
         teacher: classInfo.teacher,
         isProxy: !!classInfo.originalTeacher,
-        room: `Room ${(Math.floor(Math.random() * 3) + 1)}0${Math.floor(Math.random() * 9) + 1}`,
+        room: classInfo.room || `Room ${(Math.floor(Math.random() * 3) + 1)}0${Math.floor(Math.random() * 9) + 1}`,
         status: status
       };
     }).filter(Boolean);

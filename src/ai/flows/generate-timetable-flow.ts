@@ -21,6 +21,7 @@ export type GenerateTimetableInput = z.infer<typeof GenerateTimetableInputSchema
 const DayScheduleSchema = z.object({
   subject: z.string(),
   teacher: z.string().optional(),
+  room: z.string().optional(),
 });
 
 const TimetableDaySchema = z.object({
@@ -75,9 +76,9 @@ const prompt = ai.definePrompt({
 
   Rules:
   1.  Each time slot must be filled for each day.
-  2.  The 12:00 PM slot MUST always have "Break" as the subject, and the 'teacher' field should be omitted for this slot.
+  2.  The 12:00 PM slot MUST always have "Break" as the subject, and the 'teacher' and 'room' fields should be omitted for this slot.
   3.  Distribute subjects evenly throughout the week. Avoid scheduling the same subject back-to-back on the same day.
-  4.  Assign a faculty member to each class (except for breaks). A faculty member cannot teach two different classes at the same time.
+  4.  Assign a faculty member and a classroom (e.g., "Room 101", "Lab A", "Hall 3") to each class (except for breaks). A faculty member cannot teach two different classes at the same time.
   5.  Ensure a logical flow and a balanced workload for both students and faculty.
   6.  Adhere to all user-provided constraints strictly.
   

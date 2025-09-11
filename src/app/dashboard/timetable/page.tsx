@@ -57,14 +57,17 @@ export default function TimetablePage() {
                         ) : (
                           <div>
                             <p className="font-semibold">{cell.subject}</p>
-                            <div className="text-sm text-muted-foreground flex items-center justify-center gap-1.5">
-                              <span>{cell.teacher}</span>
-                              {isProxy && (
-                                <Badge variant="outline" className="text-xs text-blue-600 border-blue-600/30 bg-blue-500/10">
-                                  <UserCheck className="w-3 h-3 mr-1" />
-                                  Proxy
-                                </Badge>
-                              )}
+                            <div className="text-sm text-muted-foreground">
+                                <div className="flex items-center justify-center gap-1.5">
+                                    <span>{cell.teacher}</span>
+                                    {isProxy && (
+                                        <Badge variant="outline" className="text-xs text-blue-600 border-blue-600/30 bg-blue-500/10">
+                                        <UserCheck className="w-3 h-3 mr-1" />
+                                        Proxy
+                                        </Badge>
+                                    )}
+                                </div>
+                                {cell.room && <p>{cell.room}</p>}
                             </div>
                           </div>
                         )}

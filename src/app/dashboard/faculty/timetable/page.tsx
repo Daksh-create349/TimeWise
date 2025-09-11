@@ -19,10 +19,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Loader2, PlusCircle, Sparkles, Trash2, Settings } from 'lucide-react';
+import { Loader2, PlusCircle, Sparkles, Trash2, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTimetable, Schedule } from '@/context/TimetableContext';
 import TimetableDisplay from '@/components/dashboard/faculty/timetable-display';
+import { generateTimetableAction } from './actions';
 
 
 const formSchema = z.object({
@@ -33,39 +34,6 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const times = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
-const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-// Manual timetable generation logic
-const generateManualTimetable = (subjects: string[], faculty: string[]): Schedule => {
-  const schedule: Schedule = {};
-  let subjectIndex = 0;
-  let facultyIndex = 0;
-
-  times.forEach(time => {
-    schedule[time] = {};
-    days.forEach(day => {
-      if (time === "12:00 PM") {
-        schedule[time][day] = { subject: "Break" };
-      } else {
-        schedule[time][day] = {
-          subject: subjects[subjectIndex % subjects.length],
-          teacher: faculty[facultyIndex % faculty.length],
-        };
-        subjectIndex++;
-        // Ensure faculty doesn't teach two classes at once (simple increment)
-        if (subjectIndex % (subjects.length -1) === 0) {
-            facultyIndex++;
-        }
-      }
-    });
-    // Move to next faculty for next time slot to vary assignments
-    facultyIndex++; 
-  });
-  return schedule;
-};
-
-
 export default function GenerateTimetablePage() {
   const { toast } = useToast();
   const { setSchedule } = useTimetable();
@@ -75,9 +43,9 @@ export default function GenerateTimetablePage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      subjects: [{ value: 'Mathematics' }, { value: 'Physics' }, { value: 'English' }, { value: 'Computer Science' }, { value: 'Biology' }],
-      faculty: [{ value: 'Dr. Smith' }, { value: 'Prof. Johnson' }, { value: 'Ms. Davis' }, { value: 'Prof. Wilson' }, { value: 'Dr. Green' }],
-      constraints: "This is a simple generator. Constraints are not yet supported.",
+      subjects: [{ value: 'Mathematics' }, { value: 'Physics' }, { value: 'English' }, { value: 'Computer Science' }, { value: 'Biology' }, { value: 'History' }],
+      faculty: [{ value: 'Dr. Evelyn Reed' }, { value: 'Prof. Samuel Chen' }, { value: 'Dr. Maria Garcia' }, { value: 'Prof. Ben Carter' }, { value: 'Dr. Aisha Khan' }],
+      constraints: "No classes on Friday afternoons. Dr. Evelyn Reed prefers morning classes.",
     },
   });
 
@@ -95,40 +63,43 @@ export default function GenerateTimetablePage() {
     setIsLoading(true);
     setGeneratedSchedule(null);
     toast({
-      title: "Generating Timetable...",
-      description: "Creating a new schedule based on your inputs.",
+      title: "Generating Timetable with AI...",
+      description: "Our AI is creating a new schedule. This may take a moment.",
     });
 
-    // Simulate generation time
-    setTimeout(() => {
-        try {
-        const result = generateManualTimetable(
-            data.subjects.map(s => s.value),
-            data.faculty.map(f => f.value)
-        );
+    try {
+        const input = {
+            subjects: data.subjects.map(s => s.value),
+            faculty: data.faculty.map(f => f.value),
+            constraints: data.constraints,
+        };
         
-        setGeneratedSchedule(result);
+        const result = await generateTimetableAction(input);
+
+        if (result.error || !result.data) {
+            throw new Error(result.error || "AI returned an unexpected response.");
+        }
+        
+        setGeneratedSchedule(result.data.schedule);
         toast({
-            title: "Timetable Generated!",
-            description: "The new weekly timetable has been successfully created.",
+            title: "AI Timetable Generated!",
+            description: "The new weekly timetable has been successfully created by the AI.",
         });
 
-        } catch (error) {
+    } catch (error: any) {
         console.error("Timetable generation failed:", error);
         toast({
             variant: "destructive",
-            title: "Generation Failed",
-            description: "Could not generate a timetable. Please check your inputs.",
+            title: "AI Generation Failed",
+            description: error.message || "The AI could not generate a timetable. Please check your inputs or try again.",
         });
-        } finally {
+    } finally {
         setIsLoading(false);
-        }
-    }, 1000);
+    }
   };
 
   const handlePublish = () => {
     if(generatedSchedule) {
-      // @ts-ignore
       setSchedule(generatedSchedule);
       toast({
         title: "Timetable Published!",
@@ -145,8 +116,8 @@ export default function GenerateTimetablePage() {
                     <div className="flex items-center gap-3">
                         <Settings className="h-8 w-8 text-primary" />
                         <div>
-                        <CardTitle className="font-headline text-2xl">Timetable Generator</CardTitle>
-                        <CardDescription>Provide subjects and faculty to create a weekly schedule.</CardDescription>
+                        <CardTitle className="font-headline text-2xl">AI Timetable Generator</CardTitle>
+                        <CardDescription>Provide subjects, faculty, and constraints to create a weekly schedule.</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
@@ -223,10 +194,9 @@ export default function GenerateTimetablePage() {
                                         {...field}
                                         placeholder="e.g., No classes on Friday afternoon.&#10;Dr. Smith prefers morning classes."
                                         rows={4}
-                                        readOnly
                                     />
                                 </FormControl>
-                                <FormDescription>Constraint handling is not supported in the manual generator.</FormDescription>
+                                <FormDescription>Provide any scheduling rules for the AI.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                             )}
@@ -236,12 +206,12 @@ export default function GenerateTimetablePage() {
                             {isLoading ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Generating...
+                                Generating with AI...
                             </>
                             ) : (
                             <>
                                 <Sparkles className="mr-2 h-4 w-4" />
-                                Generate Timetable
+                                Generate with AI
                             </>
                             )}
                         </Button>

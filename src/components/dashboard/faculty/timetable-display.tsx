@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,6 +77,7 @@ export default function TimetableDisplay({ schedule, onPublish }: TimetableDispl
                           <div>
                             <p className="font-semibold text-sm">{cell.subject}</p>
                             <p className="text-xs text-muted-foreground">{cell.teacher}</p>
+                             {cell.room && <p className="text-xs text-muted-foreground">{cell.room}</p>}
                           </div>
                         )}
                       </td>
