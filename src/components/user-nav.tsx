@@ -15,9 +15,9 @@ import {
   DropdownMenuPortal,
   DropdownMenuSubContent
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User, CreditCard, Settings, Monitor, Sun, Moon } from "lucide-react"
+import { LogOut, User, CreditCard, Settings, Monitor, Sun, Moon, Users } from "lucide-react"
 import { useTheme } from "next-themes";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 
 interface UserNavProps {
@@ -28,9 +28,18 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
   const { setTheme } = useTheme();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const name = searchParams.get('name') || "Alex Johnson";
+  const pathname = usePathname();
+  const isFaculty = pathname.startsWith('/dashboard/faculty');
+
+  const studentName = searchParams.get('name') || "Alex Johnson";
+  const facultyName = "Dr. Evelyn Reed";
+  const name = isFaculty ? facultyName : studentName;
+  
+  const studentEmail = studentName.toLowerCase().replace(/\s/g, '.') + "@university.edu";
+  const facultyEmail = "evelyn.reed@university.edu";
+  const email = isFaculty ? facultyEmail : studentEmail;
+
   const fallback = name.split(' ').map(n => n[0]).join('');
-  const email = name.toLowerCase().replace(' ', '.') + "@university.edu";
 
   const handleLogout = () => {
     router.push('/');
@@ -39,7 +48,11 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
   const triggerContent = (
     <>
         <Avatar className="h-8 w-8">
-            <AvatarImage src={`https://picsum.photos/seed/${name}/100/100`} alt={name} data-ai-hint="student avatar" />
+            <AvatarImage 
+              src={`https://picsum.photos/seed/${isFaculty ? 'faculty1' : name}/100/100`} 
+              alt={name}
+              data-ai-hint={isFaculty ? "female professor" : "student avatar"}
+            />
             <AvatarFallback>{fallback}</AvatarFallback>
         </Avatar>
         {isSidebar && (
@@ -50,6 +63,40 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
         )}
     </>
   )
+
+  const studentMenuItems = (
+    <>
+      <DropdownMenuItem asChild>
+        <Link href="/dashboard/profile">
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+        </Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem asChild>
+        <Link href="/dashboard/fees">
+            <CreditCard className="mr-2 h-4 w-4" />
+            <span>Fees</span>
+        </Link>
+      </DropdownMenuItem>
+    </>
+  );
+
+  const facultyMenuItems = (
+    <>
+       <DropdownMenuItem asChild>
+        <Link href="/dashboard/faculty">
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+        </Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem asChild>
+        <Link href="/dashboard">
+            <Users className="mr-2 h-4 w-4" />
+            <span>Switch to Student View</span>
+        </Link>
+      </DropdownMenuItem>
+    </>
+  );
 
   return (
     <DropdownMenu>
@@ -75,18 +122,7 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link href="/dashboard/profile">
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/dashboard/fees">
-                <CreditCard className="mr-2 h-4 w-4" />
-                <span>Fees</span>
-            </Link>
-          </DropdownMenuItem>
+          {isFaculty ? facultyMenuItems : studentMenuItems}
            <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Settings className="mr-2 h-4 w-4" />

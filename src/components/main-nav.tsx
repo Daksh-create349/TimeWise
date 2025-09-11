@@ -38,7 +38,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
   const isFacultyPage = pathname.startsWith('/dashboard/faculty');
 
   const studentMenuItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { href: '/dashboard/timetable', label: 'Timetable', icon: Calendar },
     { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
     { href: '/dashboard/assignments', label: 'Assignments', icon: FileText },
@@ -50,9 +50,9 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
   ];
   
   const facultyMenuItems = [
-    { href: '/dashboard/faculty', label: 'Dashboard', icon: Users },
-    { href: '/dashboard/profile', label: 'Profile', icon: User },
-    { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
+    { href: '/dashboard/faculty', label: 'Dashboard', icon: Users, exact: true },
+    // { href: '/dashboard/faculty/profile', label: 'Profile', icon: User },
+    // { href: '/dashboard/faculty/courses', label: 'Courses', icon: BookOpen },
   ];
 
   const menuItems = isFacultyPage ? facultyMenuItems : studentMenuItems;
@@ -71,7 +71,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild
-              isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
+              isActive={item.exact ? pathname === item.href : pathname.startsWith(item.href)}
               tooltip={item.label}
             >
               <Link href={item.href}>
