@@ -40,7 +40,7 @@ export default function LoginPage() {
       <div className="relative flex min-h-screen items-center justify-center">
         <video
           className="absolute top-0 left-0 h-full w-full object-cover -z-10"
-          src="https://cdn.pixabay.com/video/2021/10/05/90933-629483642_large.mp4"
+          src="https://cdn.pixabay.com/video/2023/06/27/169029-840229967_large.mp4"
           autoPlay
           loop
           muted
