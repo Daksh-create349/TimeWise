@@ -58,6 +58,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/faculty/user-management', label: 'User Management', icon: Users },
     { href: '/dashboard/faculty/assignments', label: 'Assignments', icon: FileText },
     { href: '/dashboard/faculty/timetable', label: 'Timetable Generator', icon: Settings },
+    { href: '/dashboard/faculty/leave', label: 'Leave Request', icon: CalendarOff },
     { href: '/dashboard/faculty/calendar', label: 'Calendar', icon: Calendar },
     { href: '/dashboard/faculty/notifications', label: 'Notifications', icon: Bell },
     { href: '/dashboard/faculty/reports', label: 'Reports', icon: BarChart3 },
