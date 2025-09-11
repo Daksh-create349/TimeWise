@@ -55,6 +55,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/faculty', label: 'Dashboard', icon: Users, exact: true },
     { href: '/dashboard/faculty/profile', label: 'Profile', icon: User },
     { href: '/dashboard/faculty/assignments', label: 'Assignments', icon: FileText },
+    { href: '/dashboard/faculty/timetable', label: 'AI Timetable', icon: Calendar },
   ];
 
   const menuItems = isFacultyPage ? facultyMenuItems : studentMenuItems;

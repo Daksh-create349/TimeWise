@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AssignmentProvider } from '@/context/AssignmentContext';
+import { TimetableProvider } from '@/context/TimetableContext';
 
 export const metadata: Metadata = {
   title: 'TimeWise',
@@ -30,7 +31,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AssignmentProvider>
-            {children}
+            <TimetableProvider>
+              {children}
+            </TimetableProvider>
           </AssignmentProvider>
           <Toaster />
         </ThemeProvider>

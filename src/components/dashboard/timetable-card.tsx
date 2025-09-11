@@ -1,16 +1,20 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
-
-const schedule = [
-  { time: "09:00 - 10:30", subject: "Advanced Calculus", room: "A-301", status: "Ongoing" },
-  { time: "11:00 - 12:30", subject: "Quantum Physics", room: "B-105", status: "Upcoming" },
-  { time: "14:00 - 15:30", subject: "Data Structures", room: "C-210", status: "Upcoming" },
-  { time: "16:00 - 17:00", subject: "University Choir Practice", room: "Auditorium", status: "Upcoming" },
-];
+import { useTimetable } from "@/context/TimetableContext";
+import { useEffect, useState } from "react";
 
 export default function TimetableCard() {
+  const { getTodaysSchedule } = useTimetable();
+  const [schedule, setSchedule] = useState<any[]>([]);
+
+  useEffect(() => {
+    setSchedule(getTodaysSchedule());
+  }, [getTodaysSchedule]);
+
   return (
     <Card>
       <CardHeader>
@@ -45,6 +49,13 @@ export default function TimetableCard() {
                 </TableCell>
               </TableRow>
             ))}
+             {schedule.length === 0 && (
+                <TableRow>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                        No classes scheduled for today.
+                    </TableCell>
+                </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

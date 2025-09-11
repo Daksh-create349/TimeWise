@@ -6,64 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, Printer } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
-
-
-const schedule = {
-  "9:00 AM": {
-    Monday: { subject: "Mathematics", teacher: "Dr. Smith" },
-    Tuesday: { subject: "Physics", teacher: "Prof. Johnson" },
-    Wednesday: { subject: "Chemistry", teacher: "Dr. Brown" },
-    Thursday: { subject: "English", teacher: "Ms. Davis" },
-    Friday: { subject: "Computer Science", teacher: "Prof. Wilson" },
-  },
-  "10:00 AM": {
-    Monday: { subject: "Physics", teacher: "Prof. Johnson" },
-    Tuesday: { subject: "Mathematics", teacher: "Dr. Smith" },
-    Wednesday: { subject: "English", teacher: "Ms. Davis" },
-    Thursday: { subject: "Chemistry", teacher: "Dr. Brown" },
-    Friday: { subject: "Biology", teacher: "Dr. Green" },
-  },
-  "11:00 AM": {
-    Monday: { subject: "Chemistry", teacher: "Dr. Brown" },
-    Tuesday: { subject: "Biology", teacher: "Dr. Green" },
-    Wednesday: { subject: "Mathematics", teacher: "Dr. Smith" },
-    Thursday: { subject: "Physics", teacher: "Prof. Johnson" },
-    Friday: { subject: "English", teacher: "Ms. Davis" },
-  },
-  "12:00 PM": {
-    Monday: { subject: "Break", teacher: "" },
-    Tuesday: { subject: "Break", teacher: "" },
-    Wednesday: { subject: "Break", teacher: "" },
-    Thursday: { subject: "Break", teacher: "" },
-    Friday: { subject: "Break", teacher: "" },
-  },
-  "1:00 PM": {
-    Monday: { subject: "English", teacher: "Ms. Davis" },
-    Tuesday: { subject: "Computer Science", teacher: "Prof. Wilson" },
-    Wednesday: { subject: "Physics", teacher: "Prof. Johnson" },
-    Thursday: { subject: "Biology", teacher: "Dr. Green" },
-    Friday: { subject: "Mathematics", teacher: "Dr. Smith" },
-  },
-  "2:00 PM": {
-    Monday: { subject: "Biology", teacher: "Dr. Green" },
-    Tuesday: { subject: "Chemistry", teacher: "Dr. Brown" },
-    Wednesday: { subject: "Computer Science", teacher: "Prof. Wilson" },
-    Thursday: { subject: "Mathematics", teacher: "Dr. Smith" },
-    Friday: { subject: "Physics", teacher: "Prof. Johnson" },
-  },
-  "3:00 PM": {
-    Monday: { subject: "Computer Science", teacher: "Prof. Wilson" },
-    Tuesday: { subject: "English", teacher: "Ms. Davis" },
-    Wednesday: { subject: "Biology", teacher: "Dr. Green" },
-    Thursday: { subject: "Computer Science", teacher: "Prof. Wilson" },
-    Friday: { subject: "Chemistry", teacher: "Dr. Brown" },
-  },
-};
+import { useTimetable } from "@/context/TimetableContext";
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-const times = Object.keys(schedule);
 
 export default function TimetablePage() {
+  const { schedule } = useTimetable();
+  const times = Object.keys(schedule);
+
   const handlePrint = () => {
     window.print();
   };
@@ -93,7 +43,6 @@ export default function TimetablePage() {
                 <tr key={time} className="border-b">
                   <td className="p-3 font-medium text-muted-foreground">{time}</td>
                   {days.map((day) => {
-                    // @ts-ignore
                     const cell = schedule[time][day];
                     const isBreak = cell.subject === "Break";
                     return (
