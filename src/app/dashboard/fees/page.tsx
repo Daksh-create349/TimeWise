@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Download, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import DueDate from "@/components/dashboard/due-date";
 
 const feeSummary = {
   totalOutstanding: 525000.00,
@@ -62,7 +63,7 @@ export default function FeesPage() {
           <CardContent className="text-center">
             <p className="text-4xl font-bold text-primary">₹{new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)}</p>
             <p className="text-sm text-primary/80 mt-1">
-              Next payment due on {new Date(feeSummary.nextDueDate).toLocaleDateString()}
+              Next payment due on <DueDate date={feeSummary.nextDueDate} />
             </p>
           </CardContent>
           <CardFooter>
