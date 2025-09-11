@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Download, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import DueDate from "@/components/dashboard/due-date";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { generateReceipt, GenerateReceiptInput } from "@/ai/flows/generate-receipt-flow";
 import { useSearchParams } from "next/navigation";
+import PaymentDialog from "@/components/dashboard/payment-dialog";
 
 
 const feeSummary = {
@@ -44,6 +45,7 @@ export default function FeesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [generatedReceipt, setGeneratedReceipt] = useState<string | null>(null);
   const [isReceiptDialogOpen, setIsReceiptDialogOpen] = useState(false);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
   const handleDownload = async (payment: PaymentHistory) => {
     setIsLoading(true);
@@ -77,6 +79,22 @@ export default function FeesPage() {
     }
   };
 
+  const handlePayment = (method: string) => {
+    setIsPaymentDialogOpen(false);
+    toast({
+      title: "Processing Payment...",
+      description: `Your payment via ${method} is being processed.`,
+    });
+
+    setTimeout(() => {
+        toast({
+            title: "Payment Successful!",
+            description: `Successfully paid ₹${new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)} via ${method}.`,
+        });
+    }, 2000);
+  };
+
+
   return (
     <div className="space-y-6">
       <Card>
@@ -91,63 +109,70 @@ export default function FeesPage() {
         </CardHeader>
       </Card>
       
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="md:col-span-1 bg-primary/5 text-primary-foreground border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-primary flex items-center gap-2">
-              Outstanding Balance
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-4xl font-bold text-primary">₹{new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)}</p>
-            <p className="text-sm text-primary/80 mt-1">
-              Next payment due on <DueDate date={feeSummary.nextDueDate} />
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                Pay Now <ExternalLink className="ml-2 h-4 w-4" />
-            </Button>
-          </CardFooter>
-        </Card>
-
-        <div className="md:col-span-2 space-y-6">
-            <Card>
-                <CardHeader>
-                <CardTitle>Current Fee Breakdown</CardTitle>
-                <CardDescription>Itemized list of charges for the current semester.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                <Table>
-                    <TableHeader>
-                    <TableRow>
-                        <TableHead>Description</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead className="text-right">Status</TableHead>
-                    </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                    {feeBreakdown.map((item) => (
-                        <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.description}</TableCell>
-                        <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(item.amount)}</TableCell>
-                        <TableCell className="text-right">
-                            <Badge variant={item.status === 'Paid' ? 'secondary' : 'destructive'}>{item.status}</Badge>
-                        </TableCell>
-                        </TableRow>
-                    ))}
-                    </TableBody>
-                </Table>
-                </CardContent>
-                <CardFooter className="justify-end border-t pt-4">
-                     <div className="flex items-center gap-4 text-right">
-                        <span className="text-muted-foreground">Total</span>
-                        <span className="text-xl font-bold">₹{new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)}</span>
-                    </div>
-                </CardFooter>
+      <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
+        <div className="grid gap-6 md:grid-cols-3">
+            <Card className="md:col-span-1 bg-primary/5 text-primary-foreground border-primary/20">
+            <CardHeader>
+                <CardTitle className="text-primary flex items-center gap-2">
+                Outstanding Balance
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center">
+                <p className="text-4xl font-bold text-primary">₹{new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)}</p>
+                <p className="text-sm text-primary/80 mt-1">
+                Next payment due on <DueDate date={feeSummary.nextDueDate} />
+                </p>
+            </CardContent>
+            <CardFooter>
+                <DialogTrigger asChild>
+                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                        Pay Now <ExternalLink className="ml-2 h-4 w-4" />
+                    </Button>
+                </DialogTrigger>
+            </CardFooter>
             </Card>
+
+            <div className="md:col-span-2 space-y-6">
+                <Card>
+                    <CardHeader>
+                    <CardTitle>Current Fee Breakdown</CardTitle>
+                    <CardDescription>Itemized list of charges for the current semester.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                    <Table>
+                        <TableHeader>
+                        <TableRow>
+                            <TableHead>Description</TableHead>
+                            <TableHead className="text-right">Amount</TableHead>
+                            <TableHead className="text-right">Status</TableHead>
+                        </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                        {feeBreakdown.map((item) => (
+                            <TableRow key={item.id}>
+                            <TableCell className="font-medium">{item.description}</TableCell>
+                            <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(item.amount)}</TableCell>
+                            <TableCell className="text-right">
+                                <Badge variant={item.status === 'Paid' ? 'secondary' : 'destructive'}>{item.status}</Badge>
+                            </TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                    </CardContent>
+                    <CardFooter className="justify-end border-t pt-4">
+                        <div className="flex items-center gap-4 text-right">
+                            <span className="text-muted-foreground">Total</span>
+                            <span className="text-xl font-bold">₹{new Intl.NumberFormat('en-IN').format(feeSummary.totalOutstanding)}</span>
+                        </div>
+                    </CardFooter>
+                </Card>
+            </div>
         </div>
-      </div>
+        <DialogContent>
+            <PaymentDialog amount={feeSummary.totalOutstanding} onPaymentSelect={handlePayment} />
+        </DialogContent>
+      </Dialog>
 
 
       <Card>
