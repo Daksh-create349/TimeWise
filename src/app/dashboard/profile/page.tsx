@@ -58,7 +58,7 @@ export default function ProfilePage() {
           <Card className="text-center">
             <CardContent className="pt-6">
               <Avatar className="h-28 w-28 mx-auto mb-4 border-4 border-primary/50">
-                <AvatarImage src={`https://picsum.photos/seed/${name}/200/200`} alt={personalInfo.name} data-ai-hint="student avatar" />
+                <AvatarImage src={`https://picsum.photos/seed/${personalInfo.name}/200/200`} alt={personalInfo.name} data-ai-hint="student avatar" />
                 <AvatarFallback>{personalInfo.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
               </Avatar>
               <h2 className="text-2xl font-bold font-headline">{personalInfo.name}</h2>
