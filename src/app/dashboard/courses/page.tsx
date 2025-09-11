@@ -86,7 +86,10 @@ export default function CoursesPage() {
       </Card>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {cseCourses.map((course) => (
-          <Link href={`/dashboard/courses/${course.code}?name=${encodeURIComponent(course.name)}`} key={course.code}>
+          <Link 
+              href={`/dashboard/courses/${course.code}?name=${encodeURIComponent(course.name)}&code=${encodeURIComponent(course.code)}&description=${encodeURIComponent(course.description)}`} 
+              key={course.code}
+          >
             <Card className="flex flex-col h-full hover:border-primary transition-all">
               <CardHeader>
                 <CardTitle className="text-xl">{course.name}</CardTitle>

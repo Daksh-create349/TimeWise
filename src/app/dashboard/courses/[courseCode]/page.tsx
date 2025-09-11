@@ -2,117 +2,51 @@
 "use client";
 
 import { Suspense } from "react";
-import CourseSidebar, { menuItems } from "@/components/course-sidebar";
-import { generateCourseTopics } from "@/ai/flows/generate-course-topics-flow";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DataTable } from "@/components/data-table";
-import { ColumnDef } from "@tanstack/react-table";
+import CourseSidebar from "@/components/course-sidebar";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
-
-type Topic = {
-  srNo: number;
-  topicName: string;
-};
-
-const columns: ColumnDef<Topic>[] = [
-  {
-    accessorKey: "srNo",
-    header: "Sr. No.",
-    cell: ({ row }) => <div className="text-center">{row.getValue("srNo")}</div>,
-  },
-  {
-    accessorKey: "topicName",
-    header: "Topic Name",
-  },
-];
-
-function CourseTopicsView({ courseName }: { courseName: string }) {
-    const [topics, setTopics] = useState<Topic[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchTopics = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const result = await generateCourseTopics({ courseTitle: courseName });
-                if (result.topics) {
-                    setTopics(result.topics.map((topic, index) => ({ srNo: index + 1, topicName: topic })));
-                } else {
-                    setError("Could not generate course topics.");
-                }
-            } catch (e: any) {
-                setError(e.message || "An error occurred while fetching topics.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (courseName) {
-            fetchTopics();
-        }
-    }, [courseName]);
-    
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="font-headline text-2xl">{courseName} - Course Topics</CardTitle>
-                <CardDescription>A detailed list of topics covered in this course.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                {isLoading && (
-                    <div className="flex justify-center items-center h-64 text-muted-foreground">
-                        <Loader2 className="mr-2 h-8 w-8 animate-spin" />
-                        <p>AI is generating course topics...</p>
-                    </div>
-                )}
-                {error && (
-                        <div className="flex justify-center items-center h-64 text-destructive">
-                        <p>Error: {error}</p>
-                    </div>
-                )}
-                {!isLoading && !error && (
-                    <DataTable columns={columns} data={topics} />
-                )}
-            </CardContent>
-        </Card>
-    )
-}
-
-function PlaceholderView({ viewName, courseName }: { viewName: string; courseName: string; }) {
-  const Icon = menuItems.find(item => item.name === viewName)?.icon || Loader2;
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-headline text-2xl">{courseName} - {viewName}</CardTitle>
-        <CardDescription>Content for this section is not yet implemented.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col items-center justify-center h-64 text-muted-foreground border-2 border-dashed rounded-lg">
-          <Icon className="h-16 w-16 mb-4" />
-          <p className="text-lg font-semibold">Coming Soon</p>
-          <p>The "{viewName}" section is under construction.</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
+import { useState } from "react";
+import {
+    CourseTopicsView,
+    SyllabusView,
+    LessonPlanView,
+    CourseContentView,
+    AssignmentsView,
+    AttendanceView,
+    CourseOutcomesView,
+    BasicInfoView
+} from "@/components/dashboard/courses/course-views";
 
 function CourseDetailPageContent() {
     const searchParams = useSearchParams();
     const courseName = searchParams.get('name') || "Course";
+    const courseCode = useSearchParams().get('code') || "CS101";
+    const courseDescription = useSearchParams().get('description') || "A default course description.";
+    const course = { name: courseName, code: courseCode, description: courseDescription };
+    
     const [activeView, setActiveView] = useState("Course Topics");
     
     const renderContent = () => {
         switch (activeView) {
+            case "Basic Info":
+                return <BasicInfoView course={course} />;
+            case "Syllabus":
+                return <SyllabusView courseName={courseName} />;
             case "Course Topics":
                 return <CourseTopicsView courseName={courseName} />;
+            case "Lesson Plan":
+                return <LessonPlanView courseName={courseName} />;
+            case "Course Contents":
+                return <CourseContentView courseName={courseName} />;
+            case "Assignments":
+                return <AssignmentsView courseName={courseName} />;
+            case "Attendance":
+                return <AttendanceView courseName={courseName} />;
+            case "Course Outcomes":
+                return <CourseOutcomesView courseName={courseName} />;
+            case "Program Outcomes":
+                return <CourseOutcomesView courseName={courseName} isProgramOutcomes />;
             default:
-                return <PlaceholderView viewName={activeView} courseName={courseName} />;
+                return <CourseTopicsView courseName={courseName} />;
         }
     }
     
