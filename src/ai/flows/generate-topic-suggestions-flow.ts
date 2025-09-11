@@ -72,8 +72,24 @@ const searchYouTube = ai.defineTool(
         }
       ];
     }
-    // Return an empty array if the topic is not the one we have a real video for
-    return [];
+    // Return a generic set of high-quality educational videos if no specific match is found.
+    return [
+        {
+            title: "Intro to Python for Data Science by freeCodeCamp",
+            url: "https://www.youtube.com/watch?v=LHBE6Q9XlzI",
+            description: "A solid starting point for programming from a reputable source."
+        },
+        {
+            title: "Khan Academy Channel",
+            url: "https://www.youtube.com/@khanacademy",
+            description: "Khan Academy offers practice exercises, instructional videos, and a personalized learning dashboard."
+        },
+        {
+            title: "CrashCourse Channel",
+            url: "https://www.youtube.com/@crashcourse",
+            description: "Tons of awesome courses in one awesome channel - from astronomy to US history and everything in between."
+        }
+    ];
   }
 );
 
@@ -88,7 +104,7 @@ const prompt = ai.definePrompt({
   tools: [searchYouTube],
   prompt: `You are an expert educator and curriculum designer. For the topic '{{{topic}}}' within the course '{{{courseTitle}}}', please provide the following learning resources:
 
-1.  **YouTube Suggestions:** Use the 'searchYouTube' tool to find 3-4 highly relevant and reputable educational videos that explain this topic clearly. If the tool returns no results, state that you could not find any videos.
+1.  **YouTube Suggestions:** Use the 'searchYouTube' tool to find 3-4 highly relevant and reputable educational videos that explain this topic clearly. If the tool returns generic educational channels instead of topic-specific videos, use those as the suggestions.
 
 2.  **Quiz:** Create a short, high-quality quiz of 3-5 multiple-choice questions to test understanding of the topic. For each question, provide the question text, an array of 4 options, and the correct answer.
 
