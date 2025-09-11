@@ -15,7 +15,6 @@ export default function Logo({ className, width = 40, height = 40 }: LogoProps) 
         alt="TimeWise Logo"
         width={width}
         height={height}
-        className="rounded-full"
       />
     </div>
   );
