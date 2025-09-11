@@ -48,7 +48,7 @@ export default function FeesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <p className="text-4xl font-bold text-primary">${feeSummary.totalOutstanding.toFixed(2)}</p>
+            <p className="text-4xl font-bold text-primary">₹{feeSummary.totalOutstanding.toFixed(2)}</p>
             <p className="text-sm text-primary/80 mt-1">
               Next payment due on {new Date(feeSummary.nextDueDate).toLocaleDateString()}
             </p>
@@ -79,7 +79,7 @@ export default function FeesPage() {
                     {feeBreakdown.map((item) => (
                         <TableRow key={item.id}>
                         <TableCell className="font-medium">{item.description}</TableCell>
-                        <TableCell className="text-right font-mono">${item.amount.toFixed(2)}</TableCell>
+                        <TableCell className="text-right font-mono">₹{item.amount.toFixed(2)}</TableCell>
                         <TableCell className="text-right">
                             <Badge variant={item.status === 'Paid' ? 'secondary' : 'destructive'}>{item.status}</Badge>
                         </TableCell>
@@ -91,7 +91,7 @@ export default function FeesPage() {
                 <CardFooter className="justify-end border-t pt-4">
                      <div className="flex items-center gap-4 text-right">
                         <span className="text-muted-foreground">Total</span>
-                        <span className="text-xl font-bold">${feeSummary.totalOutstanding.toFixed(2)}</span>
+                        <span className="text-xl font-bold">₹{feeSummary.totalOutstanding.toFixed(2)}</span>
                     </div>
                 </CardFooter>
             </Card>
@@ -123,7 +123,7 @@ export default function FeesPage() {
                   <TableCell>{payment.date}</TableCell>
                   <TableCell className="font-medium">{payment.description}</TableCell>
                   <TableCell>{payment.method}</TableCell>
-                  <TableCell className="text-right font-mono">${payment.amount.toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-mono">₹{payment.amount.toFixed(2)}</TableCell>
                   <TableCell className="text-center">
                     <Button variant="outline" size="icon">
                       <Download className="h-4 w-4" />
