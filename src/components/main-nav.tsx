@@ -8,6 +8,7 @@ import {
   User,
   BookOpen,
   Settings,
+  School,
 } from 'lucide-react';
 
 import {
@@ -18,7 +19,6 @@ import {
   SidebarFooter,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import Logo from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { UserNav } from './user-nav';
 
@@ -40,7 +40,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     <>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <Logo className="h-8 w-8 text-primary" />
+          <School className="h-8 w-8 text-primary" />
           <span className="text-xl font-headline font-semibold">TimeWise</span>
         </div>
       </SidebarHeader>
