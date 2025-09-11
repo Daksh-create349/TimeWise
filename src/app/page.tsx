@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, BookUser, Building, KeyRound, Mail, Shield } from 'lucide-react';
+import { ArrowRight, BookUser, KeyRound, Mail, Shield } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Logo from '@/components/logo';
 
 export default function LoginPage() {
@@ -73,21 +72,6 @@ export default function LoginPage() {
                     <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input id="password" required type="password" placeholder="••••••••" className="pl-10" />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="university">University</Label>
-                  <Select>
-                    <SelectTrigger id="university">
-                      <div className="flex items-center gap-2">
-                        <Building className="h-4 w-4 text-muted-foreground" />
-                        <SelectValue placeholder="Select your university" />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="uni-b">Metropolitan College</SelectItem>
-                      <SelectItem value="uni-c">Institute of Technology</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
                 <Button className="w-full" asChild>
                   <Link href="/dashboard">LOGIN <ArrowRight className="ml-2" /></Link>
