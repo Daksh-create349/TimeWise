@@ -3,30 +3,21 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import Logo from '@/components/logo';
+import Image from 'next/image';
 
 export default function PortalPage() {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-8">
-      <video 
-        autoPlay 
-        loop 
-        muted 
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover -z-20"
-      >
-        <source src="https://cdn.pixabay.com/video/2020/02/22/32708-394004598_large.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <div className="absolute top-0 left-0 w-full h-full bg-black/50 -z-10" />
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-8 bg-background">
+       <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"><div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div></div>
 
       <div className="text-center mb-16 z-10">
         <div className="flex flex-col justify-center items-center gap-4 mb-4">
-          <Logo className="h-24 w-24 text-white" />
-          <h1 className="text-6xl font-bold text-white font-headline">
+          <Logo className="h-24 w-24 text-primary" />
+          <h1 className="text-6xl font-bold text-foreground font-headline">
             TimeWise
           </h1>
         </div>
-        <p className="text-2xl font-semibold text-white mt-2">
+        <p className="text-2xl font-semibold text-muted-foreground mt-2">
           Smarter Schedules, Stronger Outcomes
         </p>
       </div>
@@ -52,15 +43,17 @@ function PortalCard({ title, href, imageUrl, imageHint }: { title: string, href:
   return (
     <Link href={href}>
       <Card 
-        className="relative group h-64 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 bg-black text-white"
-        style={{
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${imageUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-        }}
-        data-ai-hint={imageHint}
+        className="relative group h-64 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1"
       >
-        <CardContent className="relative z-10 flex h-full items-end justify-between p-6">
+        <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            data-ai-hint={imageHint}
+        />
+        <div className="absolute inset-0 bg-black/60" />
+        <CardContent className="relative z-10 flex h-full items-end justify-between p-6 text-white">
           <h2 className="text-3xl font-bold">{title}</h2>
           <div className="bg-white text-black rounded-full h-12 w-12 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
             <ArrowRight className="w-6 h-6" />
