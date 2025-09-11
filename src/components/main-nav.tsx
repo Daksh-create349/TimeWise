@@ -15,6 +15,7 @@ import {
   CalendarOff,
   ShieldAlert,
   Users,
+  BookCheck,
 } from 'lucide-react';
 
 import {
@@ -42,6 +43,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/timetable', label: 'Timetable', icon: Calendar },
     { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
     { href: '/dashboard/assignments', label: 'Assignments', icon: FileText },
+    { href: '/dashboard/gradebook', label: 'Gradebook', icon: BookCheck },
     { href: '/dashboard/fees', label: 'Fees', icon: CreditCard },
     { href: '/dashboard/leave', label: 'Leave Request', icon: CalendarOff },
     { href: '/dashboard/complaints', label: 'Complaints', icon: ShieldAlert },
