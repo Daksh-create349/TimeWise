@@ -77,9 +77,15 @@ export default function FacultyLoginPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="computer-science">Computer Science</SelectItem>
-                        <SelectItem value="arts-humanities">Arts & Humanities</SelectItem>
-                        <SelectItem value="natural-sciences">Natural Sciences</SelectItem>
-                        <SelectItem value="social-sciences">Social Sciences</SelectItem>
+                        <SelectItem value="mathematics">Mathematics</SelectItem>
+                        <SelectItem value="physics">Physics</SelectItem>
+                        <SelectItem value="chemistry">Chemistry</SelectItem>
+                        <SelectItem value="biology">Biology</SelectItem>
+                        <SelectItem value="english-literature">English Literature</SelectItem>
+                        <SelectItem value="history">History</SelectItem>
+                        <SelectItem value="psychology">Psychology</SelectItem>
+                        <SelectItem value="business-administration">Business Administration</SelectItem>
+                        <SelectItem value="engineering">Engineering</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
