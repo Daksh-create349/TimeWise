@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { getLeaveRequestPreview } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, File, Loader2, Send, Sparkles } from "lucide-react";
+import { Calendar as CalendarIcon, File, Loader2, Send, Sparkles, Wand2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -22,13 +22,32 @@ import { cn } from "@/lib/cn";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
-import { isDateRange } from "@/lib/utils";
+import { useFormStatus } from "react-dom";
 
 
 const initialState = {
   data: null,
   error: null,
 };
+
+function GeneratePreviewButton() {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" variant="outline" className="w-full" disabled={pending}>
+            {pending ? (
+            <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+            </>
+            ) : (
+            <>
+                <Wand2 className="mr-2 h-4 w-4" />
+                Generate AI Preview
+            </>
+            )}
+      </Button>
+    )
+}
 
 export default function ComposeLeaveRequestPage() {
   const [state, formAction] = useActionState(getLeaveRequestPreview, initialState);
@@ -37,24 +56,8 @@ export default function ComposeLeaveRequestPage() {
 
   const [leaveType, setLeaveType] = useState<string | undefined>();
   const [date, setDate] = useState<DateRange | undefined>();
-  const [reason, setReason] = useState("");
 
-  useEffect(() => {
-    if (formRef.current) {
-        const formData = new FormData(formRef.current);
-        const hasRequiredFields = formData.get('leaveType') && formData.get('fromDate') && formData.get('toDate') && formData.get('reason');
-
-        if (hasRequiredFields) {
-            const debouncedAction = setTimeout(() => {
-                formAction(formData);
-            }, 1000); // Debounce to avoid spamming requests
-
-            return () => clearTimeout(debouncedAction);
-        }
-    }
-  }, [leaveType, date, reason, formAction]);
-
-   const handleSubmit = (e: React.FormEvent) => {
+   const handleFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
         title: "Leave Request Sent",
@@ -63,7 +66,6 @@ export default function ComposeLeaveRequestPage() {
     formRef.current?.reset();
     setDate(undefined);
     setLeaveType(undefined);
-    setReason("");
   }
 
 
@@ -83,10 +85,7 @@ export default function ComposeLeaveRequestPage() {
                 </CardHeader>
             </Card>
 
-            <form ref={formRef} onChange={(e) => {
-                 const formData = new FormData(e.currentTarget);
-                 formAction(formData);
-            }} onSubmit={handleSubmit} className="space-y-6">
+            <form action={formAction} ref={formRef} className="space-y-6">
                 
                 {/* To/CC/Subject - Readonly */}
                 <Card>
@@ -168,7 +167,7 @@ export default function ComposeLeaveRequestPage() {
                          </div>
                         <div className="space-y-2">
                             <Label htmlFor="reason">Reason for Leave *</Label>
-                            <Textarea name="reason" id="reason" placeholder="Please provide a brief explanation for your leave request" required rows={4} value={reason} onChange={(e) => setReason(e.target.value)} />
+                            <Textarea name="reason" id="reason" placeholder="Please provide a brief explanation for your leave request" required rows={4} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="proxy">Proxy Arrangements</Label>
@@ -184,12 +183,14 @@ export default function ComposeLeaveRequestPage() {
                                 <File className="h-4 w-4" /> Add File
                             </Button>
                         </div>
-
                     </CardContent>
                 </Card>
-                <Button type="submit" className="w-full">
-                    <Send className="mr-2 h-4 w-4" /> Send Leave Request
-                </Button>
+                <div className="grid grid-cols-2 gap-4">
+                    <GeneratePreviewButton />
+                    <Button type="button" onClick={handleFinalSubmit} className="w-full">
+                        <Send className="mr-2 h-4 w-4" /> Send Leave Request
+                    </Button>
+                </div>
             </form>
         </div>
 
@@ -211,7 +212,7 @@ export default function ComposeLeaveRequestPage() {
                              <div className="text-center text-muted-foreground pt-16">
                                 <Sparkles className="mx-auto h-12 w-12" />
                                 <p className="mt-4">
-                                Fill in the required fields to generate an email preview.
+                                Fill in the required fields and click "Generate Preview".
                                 </p>
                             </div>
                         )}
@@ -236,3 +237,5 @@ export default function ComposeLeaveRequestPage() {
     </div>
   );
 }
+
+    
