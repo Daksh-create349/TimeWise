@@ -1,14 +1,14 @@
-"use client";
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import Logo from '@/components/logo';
 
 export default function PortalPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-8">
       <div className="text-center mb-16">
+        <Logo className="mb-4" />
         <h1 className="text-6xl font-bold text-foreground font-headline">
           TimeWise
         </h1>

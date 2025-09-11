@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, School } from "lucide-react";
+import { Menu } from "lucide-react";
 import MainNav from "./main-nav";
 import { UserNav } from "./user-nav";
+import Logo from "./logo";
 
 export default function Header() {
   return (
@@ -13,7 +14,7 @@ export default function Header() {
             href="/dashboard"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
-            <School className="h-8 w-8 text-primary" />
+            <Logo />
             <span className="sr-only">TimeWise</span>
             </Link>
         </nav>
