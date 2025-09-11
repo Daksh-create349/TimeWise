@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI agent that generates a university weekly timetable.
@@ -22,10 +23,19 @@ const DayScheduleSchema = z.object({
   teacher: z.string(),
 });
 
-const TimetableSchema = z.record(z.string(), z.record(z.string(), DayScheduleSchema));
+const TimetableDaySchema = z.object({
+    Monday: DayScheduleSchema,
+    Tuesday: DayScheduleSchema,
+    Wednesday: DayScheduleSchema,
+    Thursday: DayScheduleSchema,
+    Friday: DayScheduleSchema,
+});
+
+const TimetableSchema = z.record(z.string(), TimetableDaySchema);
+
 
 const GenerateTimetableOutputSchema = z.object({
-  schedule: TimetableSchema.describe("The generated weekly timetable. The top-level keys should be time slots (e.g., '9:00 AM'), the next level keys should be days of the week ('Monday', 'Tuesday', etc.), and the values should be the subject and teacher."),
+  schedule: TimetableSchema.describe("The generated weekly timetable. The top-level keys should be time slots (e.g., '9:00 AM'), and the values should be an object with keys for each day of the week ('Monday' through 'Friday')."),
 });
 export type GenerateTimetableOutput = z.infer<typeof GenerateTimetableOutputSchema>;
 
