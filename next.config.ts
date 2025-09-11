@@ -5,6 +5,11 @@ config();
 
 const nextConfig: NextConfig = {
   /* config options here */
+  experimental: {
+    serverActions: {
+      maxDuration: 120, // 2 minutes
+    },
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
