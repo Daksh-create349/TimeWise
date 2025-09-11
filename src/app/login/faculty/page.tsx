@@ -107,7 +107,7 @@ export default function FacultyLoginPage() {
                     </Link>
                   </div>
 
-                  <Link href="/dashboard" passHref>
+                  <Link href="/dashboard/faculty" passHref>
                     <Button type="submit" className="w-full font-semibold text-base py-6">
                         Access Faculty Portal
                     </Button>

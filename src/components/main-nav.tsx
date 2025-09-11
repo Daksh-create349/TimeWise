@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -13,6 +14,7 @@ import {
   CreditCard,
   CalendarOff,
   ShieldAlert,
+  Users,
 } from 'lucide-react';
 
 import {
@@ -44,6 +46,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/complaints', label: 'Complaints', icon: ShieldAlert },
     { href: '/dashboard/ai-suggester', label: 'AI Suggester', icon: BotMessageSquare },
     { href: '/dashboard/profile', label: 'Profile', icon: User },
+    { href: '/dashboard/faculty', label: 'Faculty Dashboard', icon: Users },
   ];
 
   const navContent = (
