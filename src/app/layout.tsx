@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AssignmentProvider } from '@/context/AssignmentContext';
 import { TimetableProvider } from '@/context/TimetableContext';
+import { AttendanceProvider } from '@/context/AttendanceContext';
 
 export const metadata: Metadata = {
   title: 'TimeWise',
@@ -32,7 +33,9 @@ export default function RootLayout({
         >
           <AssignmentProvider>
             <TimetableProvider>
-              {children}
+              <AttendanceProvider>
+                {children}
+              </AttendanceProvider>
             </TimetableProvider>
           </AssignmentProvider>
           <Toaster />

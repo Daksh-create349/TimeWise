@@ -6,8 +6,9 @@ import { generateAttendanceQuestion } from '@/ai/flows/generate-attendance-quest
 import { Button } from '@/components/ui/button';
 import { DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Sparkles, QrCode, Link as LinkIcon, RefreshCw } from 'lucide-react';
+import { Loader2, Sparkles, QrCode, RefreshCw, XCircle } from 'lucide-react';
 import Image from 'next/image';
+import { useAttendance } from '@/context/AttendanceContext';
 
 interface AttendanceTakerDialogProps {
   subject: string;
@@ -22,8 +23,9 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
   const [questionState, setQuestionState] = useState<QuestionState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { startAttendance, closeAttendance } = useAttendance();
   
-  const studentUrl = "https://university.com/attend?c=CS101";
+  const studentUrl = "https://university.com/attend?c=CS101"; // This is a mock URL
 
   const fetchQuestion = async () => {
     setIsLoading(true);
@@ -31,6 +33,11 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
     try {
       const result = await generateAttendanceQuestion({ subject });
       setQuestionState(result);
+      startAttendance({ subject, ...result });
+      toast({
+          title: "Attendance Session Started",
+          description: "The question is now live for students.",
+      })
     } catch (error) {
       console.error('Failed to generate attendance question:', error);
       toast({
@@ -47,6 +54,14 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
     fetchQuestion();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subject]);
+
+  const handleCloseSession = () => {
+      closeAttendance();
+      toast({
+          title: "Attendance Session Closed",
+          description: "Students can no longer submit answers.",
+      });
+  }
 
   return (
     <>
@@ -97,9 +112,10 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
       <DialogFooter className="sm:justify-between gap-2">
          <Button variant="outline" onClick={fetchQuestion} disabled={isLoading}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Generate New Question
+            New Question
         </Button>
-        <Button type="button" disabled={isLoading}>
+        <Button type="button" onClick={handleCloseSession} disabled={isLoading}>
+            <XCircle className="mr-2 h-4 w-4" />
           Close Session
         </Button>
       </DialogFooter>
