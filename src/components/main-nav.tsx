@@ -79,20 +79,23 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
       </SidebarHeader>
 
       <SidebarMenu>
-        {menuItems.map((item) => (
-          <SidebarMenuItem key={item.href + item.label}>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname === item.href}
-              tooltip={item.label}
-            >
-              <Link href={item.href}>
-                <item.icon />
-                <span>{item.label}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
+        {menuItems.map((item) => {
+          const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+          return (
+            <SidebarMenuItem key={item.href + item.label}>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive}
+                tooltip={item.label}
+              >
+                <Link href={item.href}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
          {!isFacultyPage && (
           <SidebarMenuItem>
              <SidebarMenuButton
