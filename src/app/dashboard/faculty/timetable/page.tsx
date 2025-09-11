@@ -93,23 +93,17 @@ export default function GenerateTimetablePage() {
           throw new Error("AI did not return any schedule events. Please check your inputs and try again.");
         }
         
-        // Transform the flat list from the AI into the nested structure the UI expects
         const transformedSchedules: BatchTimetables = {};
 
         result.data.scheduleEvents.forEach(event => {
           const { batch, day, time, subject, teacher, room } = event;
-
-          // Ensure batch object exists
+          
           if (!transformedSchedules[batch]) {
             transformedSchedules[batch] = {};
           }
-
-          // Ensure time slot exists
           if (!transformedSchedules[batch][time]) {
             transformedSchedules[batch][time] = {};
           }
-
-          // Assign schedule for the day
           transformedSchedules[batch][time][day] = { subject, teacher, room };
         });
 
@@ -138,7 +132,7 @@ export default function GenerateTimetablePage() {
 
   const handlePublish = (batchName: string, schedule: any) => {
     if(schedule) {
-      setSchedule(schedule); // Set the main schedule to the selected batch's schedule for student view
+      setSchedule(schedule); 
       if (generatedSchedules) {
         setBatches(Object.keys(generatedSchedules));
       }
