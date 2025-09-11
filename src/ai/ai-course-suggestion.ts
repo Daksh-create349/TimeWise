@@ -47,7 +47,7 @@ const prompt = ai.definePrompt({
   Provide general recommendations suitable for a student interested in this topic.
   {{/if}}
   
-  Output a JSON object with "courses", "resources", "studyStrategies", and "summary" keys.
+  Please format your response as a JSON object with a single top-level key "suggestions", which contains "courses", "resources", "studyStrategies", and "summary".
   `,config: {
     safetySettings: [
       {
