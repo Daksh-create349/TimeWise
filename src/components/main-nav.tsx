@@ -45,7 +45,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/assignments', label: 'Assignments', icon: FileText },
     { href: '/dashboard/gradebook', label: 'Gradebook', icon: BookCheck },
     { href: '/dashboard/fees', label: 'Fees', icon: CreditCard },
-    { href: 'src/app/dashboard/leave', label: 'Leave Request', icon: CalendarOff },
+    { href: '/dashboard/leave', label: 'Leave Request', icon: CalendarOff },
     { href: '/dashboard/complaints', label: 'Complaints', icon: ShieldAlert },
     { href: '/dashboard/ai-suggester', label: 'AI Suggester', icon: BotMessageSquare },
     { href: '/dashboard/profile', label: 'Profile', icon: User },
