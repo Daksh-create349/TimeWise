@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, CheckCircle, Upload } from "lucide-react";
@@ -12,13 +15,36 @@ const upcomingAssignments = [
     { id: 3, title: "Lab Report 4", course: "Organic Chemistry", dueDate: "in 1 week", status: "Upcoming" },
 ];
 
-const submittedAssignments = [
+const initialSubmittedAssignments = [
     { id: 1, title: "Calculus Midterm", course: "Advanced Calculus", submittedDate: "2 days ago", grade: "A-" },
     { id: 2, title: "Project Proposal", course: "Data Structures", submittedDate: "5 days ago", grade: "Graded" },
     { id: 3, title: "Weekly Quiz 5", course: "Quantum Physics", submittedDate: "1 week ago", grade: "B+" },
 ];
 
+interface SubmittedAssignment {
+  id: number;
+  title: string;
+  course: string;
+  submittedDate: string;
+  grade: string;
+}
+
 export default function AssignmentsCard() {
+  const [submittedAssignments, setSubmittedAssignments] = useState<SubmittedAssignment[]>(initialSubmittedAssignments);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleAssignmentSubmit = (assignmentName: string) => {
+    const newAssignment: SubmittedAssignment = {
+      id: submittedAssignments.length + 1,
+      title: assignmentName,
+      course: "Pending evaluation",
+      submittedDate: "Just now",
+      grade: "Pending",
+    };
+    setSubmittedAssignments(prev => [newAssignment, ...prev]);
+    setIsDialogOpen(false);
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -29,7 +55,7 @@ export default function AssignmentsCard() {
               <CardDescription>Your upcoming and submitted work.</CardDescription>
             </div>
         </div>
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
                 <Upload className="mr-2 h-4 w-4" />
@@ -37,7 +63,7 @@ export default function AssignmentsCard() {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
-            <UploadAssignmentDialog />
+            <UploadAssignmentDialog onAssignmentSubmit={handleAssignmentSubmit} />
           </DialogContent>
         </Dialog>
       </CardHeader>
@@ -70,8 +96,8 @@ export default function AssignmentsCard() {
                 </div>
                 <div className="text-right flex items-center gap-2">
                    <p className="text-sm text-muted-foreground">{item.submittedDate}</p>
-                   <Badge variant="default" className="bg-green-600 hover:bg-green-700">
-                    <CheckCircle className="mr-1 h-3 w-3" /> {item.grade}
+                   <Badge variant={item.grade === 'Pending' ? 'secondary' : 'default'} className={item.grade !== 'Pending' ? 'bg-green-600 hover:bg-green-700' : ''}>
+                    {item.grade !== 'Pending' && <CheckCircle className="mr-1 h-3 w-3" />} {item.grade}
                   </Badge>
                 </div>
               </div>

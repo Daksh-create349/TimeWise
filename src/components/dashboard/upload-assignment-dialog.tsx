@@ -6,17 +6,20 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Camera, FileUp, Loader2, Image as ImageIcon } from "lucide-react";
+import { Camera, FileUp, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 
-export default function UploadAssignmentDialog() {
+interface UploadAssignmentDialogProps {
+    onAssignmentSubmit: (assignmentName: string) => void;
+}
+
+export default function UploadAssignmentDialog({ onAssignmentSubmit }: UploadAssignmentDialogProps) {
   const [assignmentName, setAssignmentName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -83,7 +86,7 @@ export default function UploadAssignmentDialog() {
         title: "Assignment Submitted!",
         description: `"${assignmentName}" has been uploaded successfully.`,
       });
-      // Reset state and close dialog could be done here
+      onAssignmentSubmit(assignmentName);
     }, 1500);
   };
   
@@ -164,9 +167,6 @@ export default function UploadAssignmentDialog() {
         )}
 
         <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="ghost">Cancel</Button>
-          </DialogClose>
           <Button type="submit" disabled={isSubmitting || (!capturedImage && !fileInputRef.current?.files?.length) || !assignmentName}>
             {isSubmitting ? (
               <>
