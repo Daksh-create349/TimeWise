@@ -1,6 +1,7 @@
 
 "use client";
 
+import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -38,6 +39,14 @@ const schedule = [
 ];
 
 export default function FacultyDashboardPage() {
+  const [attendance, setAttendance] = React.useState(schedule.map(() => true));
+
+  const handleAttendanceChange = (checked: boolean, index: number) => {
+    const newAttendance = [...attendance];
+    newAttendance[index] = checked;
+    setAttendance(newAttendance);
+  };
+
   return (
     <div className="space-y-6">
         <Card>
@@ -80,8 +89,14 @@ export default function FacultyDashboardPage() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Label htmlFor={`attendance-${index}`} className="text-sm font-medium text-green-600">Present</Label>
-                                <Switch id={`attendance-${index}`} defaultChecked/>
+                                <Label htmlFor={`attendance-${index}`} className={`text-sm font-medium ${attendance[index] ? 'text-green-600' : 'text-red-600'}`}>
+                                    {attendance[index] ? 'Present' : 'Absent'}
+                                </Label>
+                                <Switch 
+                                    id={`attendance-${index}`} 
+                                    checked={attendance[index]}
+                                    onCheckedChange={(checked) => handleAttendanceChange(checked, index)}
+                                />
                             </div>
                         </div>
                     ))}
