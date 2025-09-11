@@ -11,7 +11,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const GenerateLeaveRequestInputSchema = z.object({
+const GenerateLeaveRequestInputSchema = z.object({
   leaveType: z.string().describe('The type of leave being requested (e.g., Medical, Personal, Emergency).'),
   fromDate: z.string().describe('The start date of the leave period in YYYY-MM-DD format.'),
   toDate: z.string().describe('The end date of the leave period in YYYY-MM-DD format.'),
@@ -24,7 +24,7 @@ export const GenerateLeaveRequestInputSchema = z.object({
 });
 export type GenerateLeaveRequestInput = z.infer<typeof GenerateLeaveRequestInputSchema>;
 
-export const GenerateLeaveRequestOutputSchema = z.object({
+const GenerateLeaveRequestOutputSchema = z.object({
   emailBody: z.string().describe('The complete, formatted body of the leave request email.'),
 });
 export type GenerateLeaveRequestOutput = z.infer<typeof GenerateLeaveRequestOutputSchema>;

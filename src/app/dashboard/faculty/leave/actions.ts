@@ -1,8 +1,8 @@
 
 "use server";
 
-import { generateLeaveRequest, GenerateLeaveRequestInput } from "@/ai/flows/generate-leave-request-flow";
-import type { GenerateLeaveRequestOutput } from "@/ai/flows/generate-leave-request-flow";
+import { generateLeaveRequest } from "@/ai/flows/generate-leave-request-flow";
+import type { GenerateLeaveRequestInput, GenerateLeaveRequestOutput } from "@/ai/flows/generate-leave-request-flow";
 
 export interface LeaveRequestState {
   data: GenerateLeaveRequestOutput | null;
