@@ -226,7 +226,7 @@ export default function FeesPage() {
               {paymentHistory.map((payment) => (
                 <TableRow key={payment.id}>
                   <TableCell className="font-mono text-muted-foreground">{payment.id}</TableCell>
-                  <TableCell>{new Date(payment.date).toLocaleDateString()}</TableCell>
+                  <TableCell><DueDate date={payment.date} /></TableCell>
                   <TableCell className="font-medium">{payment.description}</TableCell>
                   <TableCell>{payment.method}</TableCell>
                   <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(payment.amount)}</TableCell>
