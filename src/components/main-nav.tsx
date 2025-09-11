@@ -41,7 +41,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
       <SidebarHeader>
         <div className="flex items-center gap-2">
           <Logo className="h-8 w-8 text-primary" />
-          <span className="text-xl font-headline font-semibold">Uniportal</span>
+          <span className="text-xl font-headline font-semibold">TimeWise</span>
         </div>
       </SidebarHeader>
 

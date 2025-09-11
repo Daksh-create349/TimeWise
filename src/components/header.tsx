@@ -15,7 +15,7 @@ export default function Header() {
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
             <Logo className="h-8 w-8 text-primary" />
-            <span className="sr-only">Uniportal</span>
+            <span className="sr-only">TimeWise</span>
             </Link>
         </nav>
         <Sheet>

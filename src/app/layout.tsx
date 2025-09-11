@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Uniportal',
-  description: 'Your modern university dashboard.',
+  title: 'TimeWise',
+  description: 'AI-Powered Learning & Assessments - Smarter, Faster, Engaging',
 };
 
 export default function RootLayout({
