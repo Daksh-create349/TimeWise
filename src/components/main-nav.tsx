@@ -32,7 +32,6 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
   const pathname = usePathname();
 
   const menuItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/dashboard/timetable', label: 'Timetable', icon: Calendar },
     { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
     { href: '/dashboard/assignments', label: 'Assignments', icon: FileText },
@@ -54,7 +53,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild
-              isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
+              isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard' || (item.href === '/dashboard/timetable' && pathname === '/dashboard'))}
               tooltip={item.label}
             >
               <Link href={item.href}>

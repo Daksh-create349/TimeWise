@@ -5,15 +5,17 @@ import { Menu } from "lucide-react";
 import MainNav from "./main-nav";
 import { UserNav } from "./user-nav";
 import WelcomeBanner from "./dashboard/welcome-banner";
+import Logo from "./logo";
 
 export default function Header() {
   return (
     <header className="sticky top-0 flex h-auto items-center gap-4 border-b bg-background px-4 md:px-6 z-30 py-4">
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
             <Link
-            href="/dashboard"
+            href="/dashboard/timetable"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
+            <Logo className="h-6 w-6" />
             <span className="sr-only">TimeWise</span>
             </Link>
         </nav>
