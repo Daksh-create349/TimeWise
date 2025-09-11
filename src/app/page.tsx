@@ -23,7 +23,7 @@ export default function PortalPage() {
         <PortalCard
           title="Students"
           href="/login/student"
-          imageUrl="https://i.pinimg.com/736x/8b/85/e6/8b85e627bc90a_5336114a407dff9b6f3.jpg"
+          imageUrl="https://i.pinimg.com/736x/8b/85/e6/8b85e627bc90a5336114a407dff9b6f3.jpg"
           imageHint="university students"
         />
         <PortalCard

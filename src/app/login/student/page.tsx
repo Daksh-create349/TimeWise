@@ -107,7 +107,7 @@ export default function StudentLoginPage() {
 
 function InfoCard({ value, label }: { value: string; label: string }) {
   return (
-    <div className="bg-white/50 border border-gray-200 rounded-lg p-4 text-center shadow">
+    <div className="bg-card border border-border rounded-lg p-4 text-center shadow">
       <p className="text-2xl font-bold text-primary">{value}</p>
       <p className="text-sm text-muted-foreground">{label}</p>
     </div>
