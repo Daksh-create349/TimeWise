@@ -1,5 +1,6 @@
 
 import Link from "next/link";
+import { Suspense } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
@@ -38,10 +39,14 @@ export default function Header() {
             </SheetContent>
         </Sheet>
         <div className="flex w-full items-center justify-between gap-4 md:ml-auto">
-            <div className="w-full">
-              <WelcomeBanner />
-            </div>
-            <UserNav />
+            <Suspense fallback={<div className="w-full h-16 bg-muted rounded-lg" />}>
+              <div className="w-full">
+                <WelcomeBanner />
+              </div>
+            </Suspense>
+             <Suspense fallback={<div className="h-8 w-8 rounded-full bg-muted" />}>
+                <UserNav />
+            </Suspense>
         </div>
     </header>
   );

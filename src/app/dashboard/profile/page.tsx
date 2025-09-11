@@ -1,6 +1,7 @@
 
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Mail, Phone, Home, User, GraduationCap, Calendar, BookOpen, BarChart2, Edit } from "lucide-react";
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const searchParams = useSearchParams();
   const name = searchParams.get('name') || "Alex Johnson";
   const studentId = "CS2023001";
@@ -130,5 +131,13 @@ function InfoItem({ icon, label, value }: { icon: React.ReactNode, label: string
             </p>
             <p className="font-medium">{value}</p>
         </div>
+    )
+}
+
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={<div>Loading profile...</div>}>
+            <ProfilePageContent />
+        </Suspense>
     )
 }

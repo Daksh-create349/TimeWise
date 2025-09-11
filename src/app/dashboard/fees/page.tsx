@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +36,7 @@ const initialPaymentHistory = [
 
 type PaymentHistory = typeof initialPaymentHistory[0];
 
-export default function FeesPage() {
+function FeesPageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const name = searchParams.get('name') || "Alex Johnson";
@@ -259,4 +259,12 @@ export default function FeesPage() {
       </Dialog>
     </div>
   );
+}
+
+export default function FeesPage() {
+    return (
+        <Suspense fallback={<div>Loading fees...</div>}>
+            <FeesPageContent />
+        </Suspense>
+    )
 }

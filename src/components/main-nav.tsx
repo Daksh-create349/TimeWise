@@ -18,7 +18,6 @@ import {
   BookCheck,
   BarChart3,
   Bell,
-  UserCheck,
 } from 'lucide-react';
 
 import {
@@ -32,6 +31,7 @@ import {
 import { cn } from '@/lib/cn';
 import { UserNav } from './user-nav';
 import Logo from './logo';
+import { Suspense } from 'react';
 
 interface MainNavProps {
   isMobile?: boolean;
@@ -60,7 +60,6 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/faculty/assignments', label: 'Assignments', icon: FileText },
     { href: '/dashboard/faculty/timetable', label: 'Timetable Generator', icon: Settings },
     { href: '/dashboard/faculty/leave', label: 'Leave Request', icon: CalendarOff },
-    { href: '/dashboard/faculty/leave', label: 'Proxy', icon: UserCheck },
     { href: '/dashboard/faculty/calendar', label: 'Calendar', icon: Calendar },
     { href: '/dashboard/faculty/notifications', label: 'Notifications', icon: Bell },
     { href: '/dashboard/faculty/reports', label: 'Reports', icon: BarChart3 },
@@ -124,7 +123,9 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
         </SidebarMenu>
         {!isMobile && (
              <div className="group-data-[collapsible=icon]:hidden px-2">
-                <UserNav isSidebar={true} />
+                <Suspense fallback={<div className="h-10 w-full bg-muted rounded-lg" />}>
+                  <UserNav isSidebar={true} />
+                </Suspense>
             </div>
         )}
       </SidebarFooter>
