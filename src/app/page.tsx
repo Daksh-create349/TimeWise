@@ -22,7 +22,7 @@ export default function PortalPage() {
         <PortalCard
           title="Students"
           href="/dashboard"
-          imageUrl="https://picsum.photos/seed/students/800/600"
+          imageUrl="https://i.pinimg.com/736x/8b/85/e6/8b85e627bc90a5336114a407dff9b6f3.jpg"
           imageHint="university students"
         />
         <PortalCard
