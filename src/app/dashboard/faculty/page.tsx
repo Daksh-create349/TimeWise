@@ -3,10 +3,12 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { BookOpen, Briefcase, Calendar, Clock, GraduationCap, Mail, Phone, Users } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const facultyProfile = {
     name: "Dr. Evelyn Reed",
@@ -36,38 +38,14 @@ const schedule = [
 
 export default function FacultyDashboardPage() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Left column */}
-      <div className="lg:col-span-1 space-y-6">
-        <Card>
-          <CardContent className="pt-6 flex flex-col items-center text-center">
-            <Avatar className="w-24 h-24 mb-4">
-              <AvatarImage src={facultyProfile.avatar} alt={facultyProfile.name} data-ai-hint="female professor" />
-              <AvatarFallback>{facultyProfile.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-            </Avatar>
-            <h2 className="text-2xl font-bold font-headline">{facultyProfile.name}</h2>
-            <p className="text-muted-foreground">{facultyProfile.title}</p>
-            <Badge variant="secondary" className="mt-2">{facultyProfile.department}</Badge>
-          </CardContent>
-          <CardContent className="text-sm text-muted-foreground space-y-4">
-            <InfoRow icon={Mail} text={facultyProfile.email} />
-            <InfoRow icon={GraduationCap} text={facultyProfile.researchArea} />
-            <InfoRow icon={Calendar} text={facultyProfile.since} />
-            <div className="border-t pt-4 mt-4">
-                <p><span className="font-medium text-foreground">Employee ID:</span> {facultyProfile.employeeId}</p>
-                <p><span className="font-medium text-foreground">Office:</span> {facultyProfile.office}</p>
-                <p><span className="font-medium text-foreground">Phone:</span> {facultyProfile.phone}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Right column */}
-      <div className="lg:col-span-2 space-y-6">
+    <div className="space-y-6">
         <Card>
             <CardHeader>
-                <CardTitle className="font-headline flex items-center gap-2">
-                    <Clock className="w-6 h-6" /> Today's Overview
+                <CardTitle className="font-headline flex items-center justify-between">
+                    Today's Overview
+                    <Link href="/dashboard/faculty/profile" passHref>
+                        <Button variant="outline">View Profile</Button>
+                    </Link>
                 </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -108,15 +86,5 @@ export default function FacultyDashboardPage() {
             </CardContent>
         </Card>
       </div>
-    </div>
   );
-}
-
-function InfoRow({ icon: Icon, text }: { icon: React.ElementType, text: string }) {
-    return (
-        <div className="flex items-center gap-3">
-            <Icon className="w-4 h-4" />
-            <span>{text}</span>
-        </div>
-    )
 }

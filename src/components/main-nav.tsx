@@ -53,7 +53,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
   
   const facultyMenuItems = [
     { href: '/dashboard/faculty', label: 'Dashboard', icon: Users, exact: true },
-    // { href: '/dashboard/faculty/profile', label: 'Profile', icon: User },
+    { href: '/dashboard/faculty/profile', label: 'Profile', icon: User },
     // { href: '/dashboard/faculty/courses', label: 'Courses', icon: BookOpen },
   ];
 
@@ -73,7 +73,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild
-              isActive={item.exact ? pathname === item.href : pathname.startsWith(item.href)}
+              isActive={item.exact ? pathname === item.href : pathname.startsWith(item.href) && !item.exact}
               tooltip={item.label}
             >
               <Link href={item.href}>

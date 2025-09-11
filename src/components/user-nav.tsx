@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -84,7 +85,7 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
   const facultyMenuItems = (
     <>
        <DropdownMenuItem asChild>
-        <Link href="/dashboard/faculty">
+        <Link href="/dashboard/faculty/profile">
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
         </Link>
