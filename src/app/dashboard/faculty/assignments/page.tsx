@@ -13,7 +13,6 @@ import {
 import UploadAssignmentForm from '@/components/dashboard/faculty/upload-assignment-form';
 import { useAssignments } from '@/context/AssignmentContext';
 import { Badge } from '@/components/ui/badge';
-import { AssignmentProvider } from '@/context/AssignmentContext';
 
 function AssignmentManagementContent() {
   const { assignments, addAssignment } = useAssignments();
@@ -87,8 +86,6 @@ function AssignmentManagementContent() {
 
 export default function FacultyAssignmentsPage() {
     return (
-        <AssignmentProvider>
-            <AssignmentManagementContent />
-        </AssignmentProvider>
+        <AssignmentManagementContent />
     )
 }
