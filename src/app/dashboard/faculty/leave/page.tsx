@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, File, Loader2, Send, Sparkles, Wand2 } from "lucide-react";
+import { Calendar as CalendarIcon, File, Loader2, Send, Sparkles, Wand2, UserCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -49,6 +49,16 @@ function GeneratePreviewButton() {
     )
 }
 
+const facultyMembers = [
+    "Dr. Samuel Chen",
+    "Dr. Maria Garcia",
+    "Prof. Ben Carter",
+    "Dr. Aisha Khan",
+    "Prof. David Miller",
+    "Dr. Olivia White",
+    "Prof. Kenji Tanaka"
+]
+
 export default function ComposeLeaveRequestPage() {
   const [state, formAction] = useActionState(getLeaveRequestPreview, initialState);
   const { toast } = useToast();
@@ -56,6 +66,7 @@ export default function ComposeLeaveRequestPage() {
 
   const [leaveType, setLeaveType] = useState<string | undefined>();
   const [date, setDate] = useState<DateRange | undefined>();
+  const [proxy, setProxy] = useState<string | undefined>();
 
    const handleFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +77,7 @@ export default function ComposeLeaveRequestPage() {
     formRef.current?.reset();
     setDate(undefined);
     setLeaveType(undefined);
+    setProxy(undefined);
   }
 
 
@@ -164,14 +176,23 @@ export default function ComposeLeaveRequestPage() {
                                     </PopoverContent>
                                 </Popover>
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="proxy">Proxy Faculty</Label>
+                                <Select name="proxy" value={proxy} onValueChange={setProxy}>
+                                    <SelectTrigger id="proxy">
+                                    <SelectValue placeholder="Select a faculty member" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {facultyMembers.map(name => (
+                                            <SelectItem key={name} value={name}>{name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                          </div>
                         <div className="space-y-2">
                             <Label htmlFor="reason">Reason for Leave *</Label>
                             <Textarea name="reason" id="reason" placeholder="Please provide a brief explanation for your leave request" required rows={4} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="proxy">Proxy Arrangements</Label>
-                            <Textarea name="proxy" id="proxy" placeholder="Describe how your classes will be covered" rows={2} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="notes">Additional Notes</Label>
