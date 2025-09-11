@@ -21,7 +21,7 @@ export default function PortalPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
         <PortalCard
           title="Students"
-          href="/dashboard"
+          href="/login/student"
           imageUrl="https://i.pinimg.com/736x/8b/85/e6/8b85e627bc90a5336114a407dff9b6f3.jpg"
           imageHint="university students"
         />
