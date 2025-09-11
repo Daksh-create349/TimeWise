@@ -10,7 +10,7 @@ export default function Logo({ className }: { className?: string }) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={cn("h-6 w-6 text-primary", className)}
+      className={cn("h-6 w-6", className)}
     >
       <circle cx="12" cy="12" r="10" />
       <polyline points="8 12 11 15 16 10" />

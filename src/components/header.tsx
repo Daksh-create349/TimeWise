@@ -14,7 +14,7 @@ export default function Header() {
             href="/dashboard"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
-            <Logo />
+            <Logo className="text-primary" />
             <span className="font-headline font-semibold">TimeWise</span>
             </Link>
         </nav>

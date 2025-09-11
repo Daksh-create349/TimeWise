@@ -21,7 +21,7 @@ export default function PortalPage() {
 
       <div className="text-center mb-16 z-10">
         <div className="flex flex-col justify-center items-center gap-4 mb-4">
-          <Logo className="h-24 w-24" />
+          <Logo className="h-24 w-24 text-white" />
           <h1 className="text-6xl font-bold text-white font-headline">
             TimeWise
           </h1>

@@ -40,7 +40,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     <>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <Logo />
+          <Logo className="text-primary" />
           <span className="text-xl font-headline font-semibold">TimeWise</span>
         </div>
       </SidebarHeader>
