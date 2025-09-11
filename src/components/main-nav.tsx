@@ -35,8 +35,9 @@ interface MainNavProps {
 
 export default function MainNav({ isMobile = false }: MainNavProps) {
   const pathname = usePathname();
+  const isFacultyPage = pathname.startsWith('/dashboard/faculty');
 
-  const menuItems = [
+  const studentMenuItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/dashboard/timetable', label: 'Timetable', icon: Calendar },
     { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
@@ -46,8 +47,15 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/complaints', label: 'Complaints', icon: ShieldAlert },
     { href: '/dashboard/ai-suggester', label: 'AI Suggester', icon: BotMessageSquare },
     { href: '/dashboard/profile', label: 'Profile', icon: User },
-    { href: '/dashboard/faculty', label: 'Faculty Dashboard', icon: Users },
   ];
+  
+  const facultyMenuItems = [
+    { href: '/dashboard/faculty', label: 'Dashboard', icon: Users },
+    { href: '/dashboard/profile', label: 'Profile', icon: User },
+    { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
+  ];
+
+  const menuItems = isFacultyPage ? facultyMenuItems : studentMenuItems;
 
   const navContent = (
     <>
@@ -73,6 +81,20 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
+         {!isFacultyPage && (
+          <SidebarMenuItem>
+             <SidebarMenuButton
+              asChild
+              isActive={pathname.startsWith('/dashboard/faculty')}
+              tooltip="Faculty Dashboard"
+            >
+              <Link href="/dashboard/faculty">
+                <Users />
+                <span>Faculty View</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )}
       </SidebarMenu>
       
       <SidebarFooter className="mt-auto">
