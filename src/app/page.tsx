@@ -1,4 +1,6 @@
+"use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,9 +8,32 @@ import Logo from '@/components/logo';
 import Image from 'next/image';
 
 export default function PortalPage() {
+  const [mousePosition, setMousePosition] = useState({ x: -1, y: -1 });
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  const backgroundStyle = {
+    '--mouse-x': `${mousePosition.x}px`,
+    '--mouse-y': `${mousePosition.y}px`,
+    backgroundImage: `radial-gradient(circle at var(--mouse-x) var(--mouse-y), hsla(204, 100%, 85%, 0.4), transparent 30%)`,
+  };
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-8 bg-background">
-       <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"><div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div></div>
+      <div 
+        className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem] transition-all duration-300"
+        style={mousePosition.x === -1 ? {} : backgroundStyle}
+      />
 
       <div className="text-center mb-16 z-10">
         <div className="flex flex-col justify-center items-center gap-4 mb-4">
