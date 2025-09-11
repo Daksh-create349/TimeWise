@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon, Send, CalendarOff } from "lucide-react"
+import { Calendar as CalendarIcon, Send, CalendarOff, Upload } from "lucide-react"
 import type { DateRange } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
@@ -31,10 +31,12 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import { Input } from "@/components/ui/input"
 
 export default function RequestLeavePage() {
   const { toast } = useToast()
   const [date, setDate] = React.useState<DateRange | undefined>()
+  const [leaveType, setLeaveType] = React.useState<string>()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,7 +45,10 @@ export default function RequestLeavePage() {
       description: "Your request has been sent to the administration for approval.",
     })
     setDate(undefined)
+    setLeaveType(undefined)
     // Here you would typically also clear other form fields
+    const form = e.target as HTMLFormElement;
+    form.reset();
   }
 
   return (
@@ -67,7 +72,7 @@ export default function RequestLeavePage() {
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="leave-type">Type of Leave</Label>
-              <Select required>
+              <Select required value={leaveType} onValueChange={setLeaveType}>
                 <SelectTrigger id="leave-type">
                   <SelectValue placeholder="Select a leave type" />
                 </SelectTrigger>
@@ -84,6 +89,20 @@ export default function RequestLeavePage() {
                 </SelectContent>
               </Select>
             </div>
+
+            {leaveType === "medical" && (
+              <div className="space-y-2">
+                <Label htmlFor="medical-certificate">
+                  Upload Medical Certificate
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Input id="medical-certificate" type="file" required className="cursor-pointer"/>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Please upload a PDF or image of your medical certificate.
+                </p>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="leave-dates">Start & End Dates</Label>
