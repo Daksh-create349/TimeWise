@@ -3,6 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, CheckCircle, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import UploadAssignmentDialog from "./upload-assignment-dialog";
 
 const upcomingAssignments = [
     { id: 1, title: "Problem Set 3", course: "Quantum Physics", dueDate: "in 2 days", status: "Due Soon" },
@@ -27,10 +29,17 @@ export default function AssignmentsCard() {
               <CardDescription>Your upcoming and submitted work.</CardDescription>
             </div>
         </div>
-        <Button>
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Assignment
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>
+                <Upload className="mr-2 h-4 w-4" />
+                Upload Assignment
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <UploadAssignmentDialog />
+          </DialogContent>
+        </Dialog>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="upcoming">
