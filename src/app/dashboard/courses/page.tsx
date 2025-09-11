@@ -1,6 +1,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { BookOpen, User, Star } from "lucide-react";
+import Link from "next/link";
 
 const cseCourses = [
   {
@@ -59,6 +60,13 @@ const cseCourses = [
     description: "An introduction to the field of AI, covering search algorithms, machine learning, neural networks, and natural language processing.",
     credits: 3,
   },
+   {
+    code: "PSM101",
+    name: "Public Speaking Mastery",
+    teacher: "Prof. Eleanor Vance",
+    description: "Develop confidence and skill in public speaking, from overcoming anxiety to delivering powerful presentations.",
+    credits: 2,
+  },
 ];
 
 
@@ -70,33 +78,35 @@ export default function CoursesPage() {
           <div className="flex items-center gap-3">
             <BookOpen className="h-8 w-8 text-primary" />
             <div>
-              <CardTitle className="font-headline text-2xl">Computer Science Courses</CardTitle>
-              <CardDescription>An overview of the core curriculum for Computer Science and Engineering.</CardDescription>
+              <CardTitle className="font-headline text-2xl">Available Courses</CardTitle>
+              <CardDescription>An overview of the core curriculum and electives.</CardDescription>
             </div>
           </div>
         </CardHeader>
       </Card>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {cseCourses.map((course) => (
-          <Card key={course.code} className="flex flex-col">
-            <CardHeader>
-              <CardTitle className="text-xl">{course.name}</CardTitle>
-              <CardDescription>{course.code}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <p className="text-sm text-muted-foreground">{course.description}</p>
-            </CardContent>
-            <CardContent className="flex items-center justify-between text-sm border-t pt-4">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                    <User className="h-4 w-4" />
-                    <span>{course.teacher}</span>
-                </div>
-                 <div className="flex items-center gap-1 font-semibold text-primary">
-                    <Star className="h-4 w-4" />
-                    <span>{course.credits} Credits</span>
-                </div>
-            </CardContent>
-          </Card>
+          <Link href={`/dashboard/courses/${course.code}?name=${encodeURIComponent(course.name)}`} key={course.code}>
+            <Card className="flex flex-col h-full hover:border-primary transition-all">
+              <CardHeader>
+                <CardTitle className="text-xl">{course.name}</CardTitle>
+                <CardDescription>{course.code}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm text-muted-foreground">{course.description}</p>
+              </CardContent>
+              <CardContent className="flex items-center justify-between text-sm border-t pt-4">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                      <User className="h-4 w-4" />
+                      <span>{course.teacher}</span>
+                  </div>
+                  <div className="flex items-center gap-1 font-semibold text-primary">
+                      <Star className="h-4 w-4" />
+                      <span>{course.credits} Credits</span>
+                  </div>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
