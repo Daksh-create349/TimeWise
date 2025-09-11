@@ -22,7 +22,7 @@ import { Separator } from '@/components/ui/separator';
 import { Loader2, PlusCircle, Sparkles, Trash2, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTimetable } from '@/context/TimetableContext';
-import type { BatchTimetables } from '@/context/TimetableContext';
+import type { BatchTimetables, Schedule } from '@/context/TimetableContext';
 import TimetableDisplay from '@/components/dashboard/faculty/timetable-display';
 import { generateTimetableAction } from './actions';
 
@@ -88,21 +88,29 @@ export default function GenerateTimetablePage() {
         if (result.error || !result.data) {
             throw new Error(result.error || "AI returned an unexpected response.");
         }
+
+        if (!result.data.scheduleEvents || result.data.scheduleEvents.length === 0) {
+          throw new Error("AI did not return any schedule events. Please check your inputs and try again.");
+        }
         
-        // Transform the AI output to the format expected by the UI
+        // Transform the flat list from the AI into the nested structure the UI expects
         const transformedSchedules: BatchTimetables = {};
-        const rawSchedules = result.data.schedules;
-        
-        // The AI returns objects like { batchOne: { 'Batch Name': schedule } }
-        // We need to flatten this.
-        Object.values(rawSchedules).forEach(batchObject => {
-            if (batchObject) {
-                const batchName = Object.keys(batchObject)[0];
-                const schedule = Object.values(batchObject)[0];
-                if (batchName && schedule) {
-                    transformedSchedules[batchName] = schedule;
-                }
-            }
+
+        result.data.scheduleEvents.forEach(event => {
+          const { batch, day, time, subject, teacher, room } = event;
+
+          // Ensure batch object exists
+          if (!transformedSchedules[batch]) {
+            transformedSchedules[batch] = {};
+          }
+
+          // Ensure time slot exists
+          if (!transformedSchedules[batch][time]) {
+            transformedSchedules[batch][time] = {};
+          }
+
+          // Assign schedule for the day
+          transformedSchedules[batch][time][day] = { subject, teacher, room };
         });
 
 
