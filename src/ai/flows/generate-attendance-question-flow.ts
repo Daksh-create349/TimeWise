@@ -18,7 +18,6 @@ export type GenerateAttendanceQuestionInput = z.infer<typeof GenerateAttendanceQ
 
 const GenerateAttendanceQuestionOutputSchema = z.object({
   question: z.string().describe('A simple, unique question related to the subject that can be answered in a few words.'),
-  answer: z.string().describe('A simple, one or two-word answer to the generated question.'),
 });
 export type GenerateAttendanceQuestionOutput = z.infer<typeof GenerateAttendanceQuestionOutputSchema>;
 
@@ -32,21 +31,17 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateAttendanceQuestionOutputSchema},
   prompt: `You are an academic assistant. Your task is to generate a simple, unique question for taking attendance in a university class.
 The question should be directly related to the provided subject and have a very simple, one or two-word answer.
-This is to verify that students are present and paying attention.
+This is to verify that students are present and paying attention. The student will provide the answer, you only need to generate the question.
 
 Subject: {{{subject}}}
 
-Generate a question and a concise answer. The question should be easy enough for a student of the subject to answer quickly.
-
 Example for "History":
 Question: "What was the name of the ship that carried the Pilgrims to America in 1620?"
-Answer: "The Mayflower"
 
 Example for "Biology":
 Question: "What is the powerhouse of the cell?"
-Answer: "Mitochondria"
 
-Generate a new, different question each time.
+Generate a new, different question each time. Only generate the question text.
 `,
 });
 
