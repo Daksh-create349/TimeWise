@@ -20,7 +20,7 @@ export type GenerateTimetableInput = z.infer<typeof GenerateTimetableInputSchema
 
 const DayScheduleSchema = z.object({
   subject: z.string(),
-  teacher: z.string(),
+  teacher: z.string().optional(),
 });
 
 const TimetableDaySchema = z.object({
@@ -56,7 +56,7 @@ const prompt = ai.definePrompt({
   name: 'generateTimetablePrompt',
   input: {schema: GenerateTimetableInputSchema},
   output: {schema: GenerateTimetableOutputSchema},
-  prompt: `You are an expert university scheduler. Your task is to create a balanced and logical weekly timetable for a 5-day week (Monday to Friday) with 8 time slots per day: 9:00 AM, 10:00 AM, 11:00 AM, 12:00 PM (Break), 1:00 PM, 2:00 PM, 3:00 PM, 4:00 PM.
+  prompt: `You are an expert university scheduler. Your task is to create a balanced and logical weekly timetable for a 5-day week (Monday to Friday) with 8 time slots per day: 9:00 AM, 10:00 AM, 11:00 AM, 12:00 PM, 1:00 PM, 2:00 PM, 3:00 PM, 4:00 PM.
 
   Available Subjects:
   {{#each subjects}}
@@ -75,9 +75,9 @@ const prompt = ai.definePrompt({
 
   Rules:
   1.  Each time slot must be filled for each day.
-  2.  The 12:00 PM slot MUST always be a "Break" with an empty teacher string.
+  2.  The 12:00 PM slot MUST always have "Break" as the subject, and the 'teacher' field should be omitted for this slot.
   3.  Distribute subjects evenly throughout the week. Avoid scheduling the same subject back-to-back on the same day.
-  4.  Assign a faculty member to each class. A faculty member cannot teach two different classes at the same time.
+  4.  Assign a faculty member to each class (except for breaks). A faculty member cannot teach two different classes at the same time.
   5.  Ensure a logical flow and a balanced workload for both students and faculty.
   6.  Adhere to all user-provided constraints strictly.
   
