@@ -1,9 +1,12 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, Printer } from "lucide-react";
 import Link from "next/link";
+import * as React from "react";
+
 
 const schedule = {
   "9:00 AM": {
@@ -61,6 +64,11 @@ const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const times = Object.keys(schedule);
 
 export default function TimetablePage() {
+    const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -108,7 +116,7 @@ export default function TimetablePage() {
           </table>
         </div>
         <div className="flex justify-end items-center mt-6 gap-4">
-            <Button variant="outline" onClick={() => window.print()}>
+            <Button variant="outline" onClick={handlePrint}>
                 <Printer className="mr-2 h-4 w-4" />
                 Print Schedule
             </Button>
