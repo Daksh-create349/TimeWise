@@ -11,7 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import DueDate from "@/components/dashboard/due-date";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { generateReceipt, GenerateReceiptInput } from "@/ai/flows/generate-receipt-flow";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 
 
@@ -64,7 +63,7 @@ export default function FeesPage() {
         studentId: studentId,
       };
       const result = await generateReceipt(input);
-      setGeneratedReceipt(result.receiptImageUri);
+      setGeneratedReceipt(result.receiptText);
       setIsReceiptDialogOpen(true);
     } catch (error) {
       console.error("Receipt generation failed:", error);
@@ -193,12 +192,12 @@ export default function FeesPage() {
           <DialogHeader>
             <DialogTitle>Generated Receipt</DialogTitle>
             <DialogDescription>
-              Here is the AI-generated receipt for your transaction. You can save this image.
+              Here is the AI-generated receipt for your transaction.
             </DialogDescription>
           </DialogHeader>
           {generatedReceipt && (
-            <div className="mt-4">
-                <Image src={generatedReceipt} alt="Generated Receipt" width={800} height={600} className="rounded-md border"/>
+            <div className="mt-4 bg-muted/50 p-4 rounded-md border">
+                <pre className="whitespace-pre-wrap text-sm font-mono">{generatedReceipt}</pre>
             </div>
           )}
         </DialogContent>

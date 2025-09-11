@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview An AI agent that generates a university fee receipt image.
+ * @fileOverview An AI agent that generates a university fee receipt.
  *
  * - generateReceipt - A function that handles the receipt generation process.
  * - GenerateReceiptInput - The input type for the generateReceipt function.
@@ -22,7 +22,7 @@ const GenerateReceiptInputSchema = z.object({
 export type GenerateReceiptInput = z.infer<typeof GenerateReceiptInputSchema>;
 
 const GenerateReceiptOutputSchema = z.object({
-  receiptImageUri: z.string().describe('The generated receipt image as a data URI.'),
+  receiptText: z.string().describe('The generated receipt as a formatted text string.'),
 });
 export type GenerateReceiptOutput = z.infer<typeof GenerateReceiptOutputSchema>;
 
@@ -33,7 +33,7 @@ export async function generateReceipt(input: GenerateReceiptInput): Promise<Gene
 const prompt = ai.definePrompt({
   name: 'generateReceiptPrompt',
   input: {schema: GenerateReceiptInputSchema},
-  prompt: `Generate an image of an official university fee receipt. The receipt should be for "TimeWise University".
+  prompt: `Generate a professional, well-formatted text-based official university fee receipt for "TimeWise University".
 
   The receipt must contain the following details clearly laid out:
   - Header: "Official Fee Receipt"
@@ -44,12 +44,11 @@ const prompt = ai.definePrompt({
   - Date of Payment: "{{date}}"
   - Description: "{{description}}"
   - Payment Method: "{{method}}"
-  - Amount Paid: "₹{{amount}}" in a prominent font.
-  - A "Paid" stamp or watermark on the receipt.
-  - A professional and clean layout with a simple border.
-  - Do not include any logos or seals that you have to invent.
+  - Amount Paid: "₹{{amount}}"
+  - Status: "Paid"
+
+  Format it cleanly with clear labels and values. Use newlines for spacing.
   `,
-  model: 'googleai/imagen-4.0-fast-generate-001',
 });
 
 const generateReceiptFlow = ai.defineFlow(
@@ -59,10 +58,7 @@ const generateReceiptFlow = ai.defineFlow(
     outputSchema: GenerateReceiptOutputSchema,
   },
   async (input) => {
-    const {media} = await prompt(input);
-    if (!media) {
-      throw new Error('Image generation failed.');
-    }
-    return {receiptImageUri: media.url};
+    const {text} = await prompt(input);
+    return {receiptText: text};
   }
 );
