@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI agent that generates a unique question for taking class attendance.
@@ -54,6 +55,7 @@ const generateAttendanceQuestionFlow = ai.defineFlow(
     name: 'generateAttendanceQuestionFlow',
     inputSchema: GenerateAttendanceQuestionInputSchema,
     outputSchema: GenerateAttendanceQuestionOutputSchema,
+    retries: 2,
   },
   async (input) => {
     const {output} = await prompt(input);
