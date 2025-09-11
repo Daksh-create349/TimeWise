@@ -13,13 +13,13 @@ export async function generateTimetableAction(
   input: GenerateTimetableInput,
 ): Promise<TimetableGeneratorState> {
 
-  if (!input.subjects || input.subjects.length === 0 || !input.faculty || input.faculty.length === 0 || !input.batches || input.batches.length === 0) {
-    return { data: null, error: "Please provide at least one batch, one subject, and one faculty member." };
+  if (!input.subjects || input.subjects.length === 0 || !input.faculty || input.faculty.length === 0) {
+    return { data: null, error: "Please provide at least one subject and one faculty member." };
   }
 
   try {
     const result = await generateTimetable(input);
-    if (!result?.scheduleEvents) {
+    if (!result?.schedule) {
       return { data: null, error: "The AI returned an unexpected response. Please try again." };
     }
     return { data: result, error: null };

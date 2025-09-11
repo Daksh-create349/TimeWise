@@ -22,7 +22,7 @@ import { Separator } from '@/components/ui/separator';
 import { Loader2, PlusCircle, Sparkles, Trash2, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTimetable } from '@/context/TimetableContext';
-import type { BatchTimetables, Schedule } from '@/context/TimetableContext';
+import type { Schedule } from '@/context/TimetableContext';
 import TimetableDisplay from '@/components/dashboard/faculty/timetable-display';
 import { generateTimetableAction } from './actions';
 
@@ -30,7 +30,6 @@ import { generateTimetableAction } from './actions';
 const formSchema = z.object({
   subjects: z.array(z.object({ value: z.string().min(2, "Subject must be at least 2 characters.") })).min(1, "Please add at least one subject."),
   faculty: z.array(z.object({ value: z.string().min(2, "Faculty name must be at least 2 characters.") })).min(1, "Please add at least one faculty member."),
-  batches: z.array(z.object({ value: z.string().min(2, "Batch name must be at least 2 characters.") })).min(1, "Please add at least one batch.").max(4, "You can generate timetables for a maximum of 4 batches at a time."),
   constraints: z.string().optional(),
 });
 
@@ -40,14 +39,13 @@ export default function GenerateTimetablePage() {
   const { toast } = useToast();
   const { setSchedule, setBatches } = useTimetable();
   const [isLoading, setIsLoading] = useState(false);
-  const [generatedSchedules, setGeneratedSchedules] = useState<BatchTimetables | null>(null);
+  const [generatedSchedule, setGeneratedSchedule] = useState<Schedule | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       subjects: [{ value: 'Mathematics' }, { value: 'Physics' }, { value: 'English' }, { value: 'Computer Science' }, { value: 'Biology' }, { value: 'History' }],
       faculty: [{ value: 'Dr. Evelyn Reed' }, { value: 'Prof. Samuel Chen' }, { value: 'Dr. Maria Garcia' }, { value: 'Prof. Ben Carter' }, { value: 'Dr. Aisha Khan' }],
-      batches: [{ value: 'Computer Science 2023' }, { value: 'Mathematics 2023' }],
       constraints: "No classes on Friday afternoons. Dr. Evelyn Reed prefers morning classes.",
     },
   });
@@ -62,24 +60,18 @@ export default function GenerateTimetablePage() {
     name: "faculty",
   });
 
-   const { fields: batchFields, append: appendBatch, remove: removeBatch } = useFieldArray({
-    control: form.control,
-    name: "batches",
-  });
-
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
-    setGeneratedSchedules(null);
+    setGeneratedSchedule(null);
     toast({
-      title: "Generating Timetables with AI...",
-      description: "Our AI is creating new schedules. This may take a moment.",
+      title: "Generating Timetable with AI...",
+      description: "Our AI is creating a new schedule. This may take a moment.",
     });
 
     try {
         const input = {
             subjects: data.subjects.map(s => s.value),
             faculty: data.faculty.map(f => f.value),
-            batches: data.batches.map(b => b.value),
             constraints: data.constraints,
         };
         
@@ -88,34 +80,15 @@ export default function GenerateTimetablePage() {
         if (result.error || !result.data) {
             throw new Error(result.error || "AI returned an unexpected response.");
         }
-
-        if (!result.data.scheduleEvents || result.data.scheduleEvents.length === 0) {
-          throw new Error("AI did not return any schedule events. Please check your inputs and try again.");
+        
+        if (!result.data.schedule || Object.keys(result.data.schedule).length === 0) {
+          throw new Error("AI did not return a valid schedule. Please check your inputs and try again.");
         }
         
-        const transformedSchedules: BatchTimetables = {};
-
-        result.data.scheduleEvents.forEach(event => {
-          const { batch, day, time, subject, teacher, room } = event;
-          
-          if (!transformedSchedules[batch]) {
-            transformedSchedules[batch] = {};
-          }
-          if (!transformedSchedules[batch][time]) {
-            transformedSchedules[batch][time] = {};
-          }
-          transformedSchedules[batch][time][day] = { subject, teacher, room };
-        });
-
-
-        if (Object.keys(transformedSchedules).length === 0) {
-            throw new Error("AI did not return any valid schedules. Please try again.");
-        }
-
-        setGeneratedSchedules(transformedSchedules);
+        setGeneratedSchedule(result.data.schedule);
         toast({
-            title: "AI Timetables Generated!",
-            description: "New weekly timetables have been successfully created by the AI.",
+            title: "AI Timetable Generated!",
+            description: "A new weekly timetable has been successfully created by the AI.",
         });
 
     } catch (error: any) {
@@ -123,22 +96,20 @@ export default function GenerateTimetablePage() {
         toast({
             variant: "destructive",
             title: "AI Generation Failed",
-            description: error.message || "The AI could not generate timetables. Please check your inputs or try again.",
+            description: error.message || "The AI could not generate the timetable. Please check your inputs or try again.",
         });
     } finally {
         setIsLoading(false);
     }
   };
 
-  const handlePublish = (batchName: string, schedule: any) => {
+  const handlePublish = (schedule: Schedule) => {
     if(schedule) {
       setSchedule(schedule); 
-      if (generatedSchedules) {
-        setBatches(Object.keys(generatedSchedules));
-      }
+      setBatches(['Generated Batch']); // You might want to get this from the user
       toast({
         title: "Timetable Published!",
-        description: `The timetable for ${batchName} is now live for all students.`,
+        description: `The new timetable is now live for all students.`,
       });
     }
   }
@@ -152,7 +123,7 @@ export default function GenerateTimetablePage() {
                         <Settings className="h-8 w-8 text-primary" />
                         <div>
                         <CardTitle className="font-headline text-2xl">AI Timetable Generator</CardTitle>
-                        <CardDescription>Provide inputs to create weekly schedules for multiple batches.</CardDescription>
+                        <CardDescription>Provide inputs to create a weekly schedule.</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
@@ -160,44 +131,6 @@ export default function GenerateTimetablePage() {
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         
-                        <div>
-                            <FormField
-                                control={form.control}
-                                name="batches"
-                                render={() => (
-                                    <FormItem>
-                                        <FormLabel>Batches</FormLabel>
-                                        <FormDescription className="text-xs mb-2">List of student batches to schedule (max 4).</FormDescription>
-                                        <div className="space-y-2">
-                                            {batchFields.map((field, index) => (
-                                                <FormField
-                                                key={field.id}
-                                                control={form.control}
-                                                name={`batches.${index}.value`}
-                                                render={({ field }) => (
-                                                    <FormItem className="flex items-center gap-2">
-                                                        <FormControl>
-                                                            <Input {...field} placeholder="e.g., Computer Science 2023" />
-                                                        </FormControl>
-                                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeBatch(index)}>
-                                                            <Trash2 className="h-4 w-4 text-destructive"/>
-                                                        </Button>
-                                                    </FormItem>
-                                                )}
-                                                />
-                                            ))}
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => appendBatch({ value: '' })}>
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Batch
-                            </Button>
-                        </div>
-
-                        <Separator />
-
                         <div>
                             <FormLabel>Subjects</FormLabel>
                             <FormDescription className="text-xs mb-2">List of all subjects to be scheduled.</FormDescription>
@@ -294,7 +227,7 @@ export default function GenerateTimetablePage() {
             </Card>
         </div>
         <div className="md:col-span-2">
-            <TimetableDisplay schedules={generatedSchedules} onPublish={handlePublish} />
+            <TimetableDisplay schedule={generatedSchedule} onPublish={handlePublish} />
         </div>
     </div>
   );
