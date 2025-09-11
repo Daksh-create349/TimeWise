@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -18,9 +19,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Loader2, PlusCircle, Sparkles, Trash2, Wand2 } from 'lucide-react';
+import { Calendar, Loader2, PlusCircle, Sparkles, Trash2, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateTimetable } from '@/ai/flows/generate-timetable-flow';
 import { useTimetable, Schedule } from '@/context/TimetableContext';
 import TimetableDisplay from '@/components/dashboard/faculty/timetable-display';
 
@@ -33,6 +33,39 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+const times = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
+const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+// Manual timetable generation logic
+const generateManualTimetable = (subjects: string[], faculty: string[]): Schedule => {
+  const schedule: Schedule = {};
+  let subjectIndex = 0;
+  let facultyIndex = 0;
+
+  times.forEach(time => {
+    schedule[time] = {};
+    days.forEach(day => {
+      if (time === "12:00 PM") {
+        schedule[time][day] = { subject: "Break" };
+      } else {
+        schedule[time][day] = {
+          subject: subjects[subjectIndex % subjects.length],
+          teacher: faculty[facultyIndex % faculty.length],
+        };
+        subjectIndex++;
+        // Ensure faculty doesn't teach two classes at once (simple increment)
+        if (subjectIndex % (subjects.length -1) === 0) {
+            facultyIndex++;
+        }
+      }
+    });
+    // Move to next faculty for next time slot to vary assignments
+    facultyIndex++; 
+  });
+  return schedule;
+};
+
+
 export default function GenerateTimetablePage() {
   const { toast } = useToast();
   const { setSchedule } = useTimetable();
@@ -44,7 +77,7 @@ export default function GenerateTimetablePage() {
     defaultValues: {
       subjects: [{ value: 'Mathematics' }, { value: 'Physics' }, { value: 'English' }, { value: 'Computer Science' }, { value: 'Biology' }],
       faculty: [{ value: 'Dr. Smith' }, { value: 'Prof. Johnson' }, { value: 'Ms. Davis' }, { value: 'Prof. Wilson' }, { value: 'Dr. Green' }],
-      constraints: "Dr. Smith cannot teach on Fridays. Physics should not be the first class of the day.",
+      constraints: "This is a simple generator. Constraints are not yet supported.",
     },
   });
 
@@ -63,35 +96,34 @@ export default function GenerateTimetablePage() {
     setGeneratedSchedule(null);
     toast({
       title: "Generating Timetable...",
-      description: "The AI is working its magic. This might take a moment.",
+      description: "Creating a new schedule based on your inputs.",
     });
-    try {
-      const result = await generateTimetable({
-        subjects: data.subjects.map(s => s.value),
-        faculty: data.faculty.map(f => f.value),
-        constraints: data.constraints,
-      });
 
-      if (!result?.schedule) {
-        throw new Error("AI returned an unexpected response.");
-      }
-      
-      setGeneratedSchedule(result.schedule);
-      toast({
-        title: "Timetable Generated!",
-        description: "The new weekly timetable has been successfully created.",
-      });
+    // Simulate generation time
+    setTimeout(() => {
+        try {
+        const result = generateManualTimetable(
+            data.subjects.map(s => s.value),
+            data.faculty.map(f => f.value)
+        );
+        
+        setGeneratedSchedule(result);
+        toast({
+            title: "Timetable Generated!",
+            description: "The new weekly timetable has been successfully created.",
+        });
 
-    } catch (error) {
-      console.error("Timetable generation failed:", error);
-      toast({
-        variant: "destructive",
-        title: "Generation Failed",
-        description: "The AI failed to generate a timetable. Please check your inputs or try again.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+        } catch (error) {
+        console.error("Timetable generation failed:", error);
+        toast({
+            variant: "destructive",
+            title: "Generation Failed",
+            description: "Could not generate a timetable. Please check your inputs.",
+        });
+        } finally {
+        setIsLoading(false);
+        }
+    }, 1000);
   };
 
   const handlePublish = () => {
@@ -111,10 +143,10 @@ export default function GenerateTimetablePage() {
             <Card>
                 <CardHeader>
                     <div className="flex items-center gap-3">
-                        <Wand2 className="h-8 w-8 text-primary" />
+                        <Settings className="h-8 w-8 text-primary" />
                         <div>
-                        <CardTitle className="font-headline text-2xl">AI Timetable Generator</CardTitle>
-                        <CardDescription>Provide the necessary details and let AI create the perfect schedule.</CardDescription>
+                        <CardTitle className="font-headline text-2xl">Timetable Generator</CardTitle>
+                        <CardDescription>Provide subjects and faculty to create a weekly schedule.</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
@@ -191,9 +223,10 @@ export default function GenerateTimetablePage() {
                                         {...field}
                                         placeholder="e.g., No classes on Friday afternoon.&#10;Dr. Smith prefers morning classes."
                                         rows={4}
+                                        readOnly
                                     />
                                 </FormControl>
-                                <FormDescription>Provide any specific rules or preferences for the AI to follow.</FormDescription>
+                                <FormDescription>Constraint handling is not supported in the manual generator.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                             )}
