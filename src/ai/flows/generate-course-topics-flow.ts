@@ -44,6 +44,7 @@ const generateCourseTopicsFlow = ai.defineFlow(
     name: 'generateCourseTopicsFlow',
     inputSchema: GenerateCourseTopicsInputSchema,
     outputSchema: GenerateCourseTopicsOutputSchema,
+    retries: 2,
   },
   async (input) => {
     const {output} = await prompt(input);
