@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,7 @@ import {
 import { LogOut, User, CreditCard, Settings, Monitor, Sun, Moon } from "lucide-react"
 import { useTheme } from "next-themes";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface UserNavProps {
     isSidebar?: boolean;
@@ -74,13 +75,17 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/profile">
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CreditCard className="mr-2 h-4 w-4" />
-            <span>Billing</span>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/fees">
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Fees</span>
+            </Link>
           </DropdownMenuItem>
            <DropdownMenuSub>
             <DropdownMenuSubTrigger>

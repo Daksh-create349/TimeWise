@@ -10,6 +10,7 @@ import {
   Calendar,
   FileText,
   BotMessageSquare,
+  CreditCard,
 } from 'lucide-react';
 
 import {
@@ -36,6 +37,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/timetable', label: 'Timetable', icon: Calendar },
     { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
     { href: '/dashboard/assignments', label: 'Assignments', icon: FileText },
+    { href: '/dashboard/fees', label: 'Fees', icon: CreditCard },
     { href: '/dashboard/ai-suggester', label: 'AI Suggester', icon: BotMessageSquare },
     { href: '/dashboard/profile', label: 'Profile', icon: User },
   ];
