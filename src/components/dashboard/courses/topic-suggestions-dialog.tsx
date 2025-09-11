@@ -174,7 +174,7 @@ export default function TopicSuggestionsDialog({
           Showing suggestions for topic: <span className="font-semibold text-primary">{topicName}</span>
         </DialogDescription>
       </DialogHeader>
-      <div className="py-4 min-h-[24rem]">
+      <div className="py-4 min-h-[24rem] overflow-y-auto pr-4">
         {renderContent()}
       </div>
     </>
