@@ -56,7 +56,8 @@ const facultyMembers = [
     "Dr. Aisha Khan",
     "Prof. David Miller",
     "Dr. Olivia White",
-    "Prof. Kenji Tanaka"
+    "Prof. Kenji Tanaka",
+    "Dr. Alan Turing"
 ]
 
 export default function ComposeLeaveRequestPage() {
