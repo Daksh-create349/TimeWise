@@ -1,8 +1,7 @@
 
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
-import { useFormState } from "react-dom";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { getLeaveRequestPreview } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -36,9 +35,9 @@ export default function ComposeLeaveRequestPage() {
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [leaveType, setLeaveType] =
-    (useState < string) | (undefined > undefined);
-  const [date, setDate] = (useState < DateRange) | (undefined > undefined);
+  const [leaveType, setLeaveType] = useState<string | undefined>();
+  const [date, setDate] = useState<DateRange | undefined>();
+  const [reason, setReason] = useState("");
 
   useEffect(() => {
     if (formRef.current) {
@@ -53,7 +52,7 @@ export default function ComposeLeaveRequestPage() {
             return () => clearTimeout(debouncedAction);
         }
     }
-  }, [leaveType, date, formAction]);
+  }, [leaveType, date, reason, formAction]);
 
    const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +63,7 @@ export default function ComposeLeaveRequestPage() {
     formRef.current?.reset();
     setDate(undefined);
     setLeaveType(undefined);
+    setReason("");
   }
 
 
@@ -125,7 +125,7 @@ export default function ComposeLeaveRequestPage() {
                         </div>
                          <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="from-date">From Date *</Label>
+                                <Label htmlFor="from-date">From & To Dates *</Label>
                                 <Input type="hidden" name="fromDate" value={date?.from ? format(date.from, 'yyyy-MM-dd') : ''} />
                                 <Input type="hidden" name="toDate" value={date?.to ? format(date.to, 'yyyy-MM-dd') : ''} />
                                 <Popover>
@@ -149,7 +149,7 @@ export default function ComposeLeaveRequestPage() {
                                                 format(date.from, "LLL dd, y")
                                             )
                                         ) : (
-                                            <span>dd/mm/yyyy</span>
+                                            <span>dd/mm/yyyy - dd/mm/yyyy</span>
                                         )}
                                     </Button>
                                     </PopoverTrigger>
@@ -168,7 +168,7 @@ export default function ComposeLeaveRequestPage() {
                          </div>
                         <div className="space-y-2">
                             <Label htmlFor="reason">Reason for Leave *</Label>
-                            <Textarea name="reason" id="reason" placeholder="Please provide a brief explanation for your leave request" required rows={4} />
+                            <Textarea name="reason" id="reason" placeholder="Please provide a brief explanation for your leave request" required rows={4} value={reason} onChange={(e) => setReason(e.target.value)} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="proxy">Proxy Arrangements</Label>
