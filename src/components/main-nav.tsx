@@ -8,7 +8,8 @@ import {
   BookOpen,
   Settings,
   Calendar,
-  FileText
+  FileText,
+  BotMessageSquare,
 } from 'lucide-react';
 
 import {
@@ -31,9 +32,11 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
   const pathname = usePathname();
 
   const menuItems = [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/dashboard/timetable', label: 'Timetable', icon: Calendar },
     { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
     { href: '/dashboard/assignments', label: 'Assignments', icon: FileText },
+    { href: '/dashboard/ai-suggester', label: 'AI Suggester', icon: BotMessageSquare },
     { href: '/dashboard/profile', label: 'Profile', icon: User },
   ];
 
@@ -51,7 +54,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild
-              isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard' || (item.href === '/dashboard/timetable' && pathname === '/dashboard'))}
+              isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
               tooltip={item.label}
             >
               <Link href={item.href}>
