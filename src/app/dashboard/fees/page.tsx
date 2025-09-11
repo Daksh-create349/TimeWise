@@ -1,13 +1,19 @@
 
 "use client";
 
+import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Download, ExternalLink } from "lucide-react";
+import { CreditCard, Download, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import DueDate from "@/components/dashboard/due-date";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { generateReceipt, GenerateReceiptInput } from "@/ai/flows/generate-receipt-flow";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+
 
 const feeSummary = {
   totalOutstanding: 525000.00,
@@ -28,15 +34,48 @@ const paymentHistory = [
     { id: "TXN1003", date: "2023-01-12", description: "Spring Semester Fees", amount: 515000.00, method: "Online Transfer" },
 ];
 
+type PaymentHistory = typeof paymentHistory[0];
 
 export default function FeesPage() {
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const name = searchParams.get('name') || "Alex Johnson";
+  const studentId = "CS2023001";
 
-  const handleDownload = (transactionId: string) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [generatedReceipt, setGeneratedReceipt] = useState<string | null>(null);
+  const [isReceiptDialogOpen, setIsReceiptDialogOpen] = useState(false);
+
+  const handleDownload = async (payment: PaymentHistory) => {
+    setIsLoading(true);
     toast({
-      title: "Downloading Receipt",
-      description: `Your receipt for transaction ${transactionId} is downloading.`,
+      title: "Generating Your Receipt...",
+      description: `The AI is creating a receipt for transaction ${payment.id}. Please wait.`,
     });
+
+    try {
+      const input: GenerateReceiptInput = {
+        transactionId: payment.id,
+        date: payment.date,
+        description: payment.description,
+        amount: payment.amount,
+        method: payment.method,
+        studentName: name,
+        studentId: studentId,
+      };
+      const result = await generateReceipt(input);
+      setGeneratedReceipt(result.receiptImageUri);
+      setIsReceiptDialogOpen(true);
+    } catch (error) {
+      console.error("Receipt generation failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Generation Failed",
+        description: "The AI failed to generate a receipt. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -138,8 +177,8 @@ export default function FeesPage() {
                   <TableCell>{payment.method}</TableCell>
                   <TableCell className="text-right font-mono">₹{new Intl.NumberFormat('en-IN').format(payment.amount)}</TableCell>
                   <TableCell className="text-center">
-                    <Button variant="outline" size="icon" onClick={() => handleDownload(payment.id)}>
-                      <Download className="h-4 w-4" />
+                    <Button variant="outline" size="icon" onClick={() => handleDownload(payment)} disabled={isLoading}>
+                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin"/> : <Download className="h-4 w-4" />}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -148,6 +187,22 @@ export default function FeesPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={isReceiptDialogOpen} onOpenChange={setIsReceiptDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Generated Receipt</DialogTitle>
+            <DialogDescription>
+              Here is the AI-generated receipt for your transaction. You can save this image.
+            </DialogDescription>
+          </DialogHeader>
+          {generatedReceipt && (
+            <div className="mt-4">
+                <Image src={generatedReceipt} alt="Generated Receipt" width={800} height={600} className="rounded-md border"/>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
