@@ -6,11 +6,23 @@ import Logo from '@/components/logo';
 
 export default function PortalPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-background p-8">
-      <div className="text-center mb-16">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-8">
+      <video 
+        autoPlay 
+        loop 
+        muted 
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover -z-20"
+      >
+        <source src="https://cdn.pixabay.com/video/2020/02/22/32708-394004598_large.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div className="absolute top-0 left-0 w-full h-full bg-black/50 -z-10" />
+
+      <div className="text-center mb-16 z-10">
         <div className="flex flex-col justify-center items-center gap-4 mb-4">
           <Logo className="h-24 w-24" />
-          <h1 className="text-6xl font-bold text-foreground font-headline">
+          <h1 className="text-6xl font-bold text-white font-headline">
             TimeWise
           </h1>
         </div>
@@ -18,7 +30,7 @@ export default function PortalPage() {
           AI-Powered Learning & Assessments - Smarter, Faster, Engaging
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl z-10">
         <PortalCard
           title="Students"
           href="/login/student"
