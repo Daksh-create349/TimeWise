@@ -27,15 +27,38 @@ import { ShieldAlert } from "lucide-react"
 
 export default function ComplaintsPage() {
   const { toast } = useToast()
+  const [category, setCategory] = React.useState("")
+  const [subject, setSubject] = React.useState("")
+  const [description, setDescription] = React.useState("")
+
+  const isFormValid = () => {
+    return category && subject && description;
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!isFormValid()) {
+      toast({
+        variant: "destructive",
+        title: "Incomplete Form",
+        description: "Please fill out all fields.",
+      })
+      return;
+    }
+
     toast({
       title: "Complaint Submitted",
       description:
         "Your complaint has been registered. You will be contacted by the concerned department shortly.",
     })
-    // Here you would typically also clear form fields
+    
+    // Reset form
+    setCategory("")
+    setSubject("")
+    setDescription("")
+    const form = e.target as HTMLFormElement
+    form.reset()
   }
 
   return (
@@ -59,7 +82,7 @@ export default function ComplaintsPage() {
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="complaint-category">Category</Label>
-              <Select required>
+              <Select required value={category} onValueChange={setCategory}>
                 <SelectTrigger id="complaint-category">
                   <SelectValue placeholder="Select a complaint category" />
                 </SelectTrigger>
@@ -86,6 +109,8 @@ export default function ComplaintsPage() {
                 id="subject"
                 placeholder="e.g., Issue with library book availability"
                 required
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
               />
             </div>
 
@@ -96,11 +121,13 @@ export default function ComplaintsPage() {
                 placeholder="Please provide a detailed description of the issue, including dates, names, and any other relevant information."
                 rows={8}
                 required
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={!isFormValid()}>
               <Send className="mr-2 h-4 w-4" />
               Submit Complaint
             </Button>

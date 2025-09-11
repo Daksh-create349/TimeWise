@@ -103,6 +103,11 @@ export default function AssignmentsCard() {
                   </div>
                 </div>
               ))}
+              {upcomingAssignments.length === 0 && (
+                <div className="text-center text-muted-foreground p-4">
+                    No upcoming assignments.
+                </div>
+              )}
             </TabsContent>
             <TabsContent value="submitted" className="mt-4 space-y-4">
               {submittedAssignments.map((item) => (

@@ -64,11 +64,10 @@ const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const times = Object.keys(schedule);
 
 export default function TimetablePage() {
-    const handlePrint = () => {
-    if (typeof window !== "undefined") {
-      window.print();
-    }
+  const handlePrint = () => {
+    window.print();
   };
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">

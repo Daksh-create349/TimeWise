@@ -1,10 +1,11 @@
-"use client"
-
-import { type ClassValue } from "clsx"
+import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { DateRange } from "react-day-picker";
-import { cn } from "@/lib/cn";
+import type { DateRange } from "react-day-picker";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 
 export function isDateRange(date: any): date is DateRange {
-  return date && typeof date === 'object' && date.from && date.to;
+  return date && typeof date === 'object' && 'from' in date && 'to' in date;
 }
