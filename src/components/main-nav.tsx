@@ -8,6 +8,8 @@ import {
   User,
   BookOpen,
   Settings,
+  Calendar,
+  FileText
 } from 'lucide-react';
 
 import {
@@ -31,8 +33,10 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
 
   const menuItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/dashboard/ai-suggester', label: 'AI Suggester', icon: BotMessageSquare },
+    { href: '/dashboard/timetable', label: 'Timetable', icon: Calendar },
     { href: '/dashboard/courses', label: 'Courses', icon: BookOpen },
+    { href: '/dashboard/assignments', label: 'Assignments', icon: FileText },
+    { href: '/dashboard/ai-suggester', label: 'AI Suggester', icon: BotMessageSquare },
     { href: '/dashboard/profile', label: 'Profile', icon: User },
   ];
 
@@ -40,7 +44,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     <>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <Logo className="text-primary" />
+          <Logo />
           <span className="text-xl font-headline font-semibold">TimeWise</span>
         </div>
       </SidebarHeader>
@@ -50,7 +54,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild
-              isActive={pathname === item.href}
+              isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
               tooltip={item.label}
             >
               <Link href={item.href}>

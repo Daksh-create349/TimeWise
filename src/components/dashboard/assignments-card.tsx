@@ -20,7 +20,7 @@ export default function AssignmentsCard() {
     <Card>
       <CardHeader>
          <div className="flex items-center gap-2">
-            <FileText className="h-6 w-6 text-primary" />
+            <FileText className="h-6 w-6" />
             <div>
               <CardTitle className="font-headline">Assignments</CardTitle>
               <CardDescription>Your upcoming and submitted work.</CardDescription>

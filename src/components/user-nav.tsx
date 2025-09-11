@@ -19,13 +19,13 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
   const triggerContent = (
     <>
         <Avatar className="h-8 w-8">
-            <AvatarImage src="https://picsum.photos/100/100" alt="@student" data-ai-hint="student avatar" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarImage src="https://picsum.photos/seed/aj/100/100" alt="@student" data-ai-hint="student avatar" />
+            <AvatarFallback>AJ</AvatarFallback>
         </Avatar>
         {isSidebar && (
             <div className="text-left">
-                <p className="text-sm font-medium">Jane Doe</p>
-                <p className="text-xs text-muted-foreground">jane.doe@state.edu</p>
+                <p className="text-sm font-medium">Alex Johnson</p>
+                <p className="text-xs text-muted-foreground">alex.j@university.edu</p>
             </div>
         )}
     </>
@@ -47,9 +47,9 @@ export function UserNav({ isSidebar = false }: UserNavProps) {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Jane Doe</p>
+            <p className="text-sm font-medium leading-none">Alex Johnson</p>
             <p className="text-xs leading-none text-muted-foreground">
-              jane.doe@state.edu
+              alex.j@university.edu
             </p>
           </div>
         </DropdownMenuLabel>
