@@ -10,17 +10,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Camera, FileUp, Loader2 } from "lucide-react";
+import { Camera, FileUp, Loader2, Link } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 
 interface UploadAssignmentDialogProps {
+    assignmentName: string;
     onAssignmentSubmit: (assignmentName: string) => void;
 }
 
-export default function UploadAssignmentDialog({ onAssignmentSubmit }: UploadAssignmentDialogProps) {
-  const [assignmentName, setAssignmentName] = useState("");
+export default function UploadAssignmentDialog({ assignmentName: initialAssignmentName, onAssignmentSubmit }: UploadAssignmentDialogProps) {
+  const [assignmentName, setAssignmentName] = useState(initialAssignmentName);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
@@ -61,6 +62,15 @@ export default function UploadAssignmentDialog({ onAssignmentSubmit }: UploadAss
         }
     }
   }, [showCamera, toast]);
+  
+  useEffect(() => {
+    setAssignmentName(initialAssignmentName);
+    setCapturedImage(null);
+    setShowCamera(false);
+    if(fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [initialAssignmentName])
 
   const handleCapture = () => {
     if (videoRef.current && canvasRef.current) {
@@ -90,6 +100,8 @@ export default function UploadAssignmentDialog({ onAssignmentSubmit }: UploadAss
     }, 1500);
   };
   
+  const fileSelected = fileInputRef.current?.files && fileInputRef.current?.files?.length > 0;
+  
   return (
     <>
       <DialogHeader>
@@ -97,8 +109,7 @@ export default function UploadAssignmentDialog({ onAssignmentSubmit }: UploadAss
           Upload Assignment
         </DialogTitle>
         <DialogDescription>
-          Enter the assignment name, then choose to upload a PDF or take a
-          photo.
+          Submit your assignment by taking a photo, uploading a PDF, or providing a link.
         </DialogDescription>
       </DialogHeader>
       <form onSubmit={handleSubmit} className="space-y-6 py-4">
@@ -110,6 +121,7 @@ export default function UploadAssignmentDialog({ onAssignmentSubmit }: UploadAss
             value={assignmentName}
             onChange={(e) => setAssignmentName(e.target.value)}
             required
+            readOnly
           />
         </div>
 
@@ -153,21 +165,29 @@ export default function UploadAssignmentDialog({ onAssignmentSubmit }: UploadAss
 
 
         {!showCamera && !capturedImage && (
-            <div className="grid grid-cols-2 gap-4">
-              <Button type="button" variant="outline" onClick={() => setShowCamera(true)}>
-                <Camera className="mr-2 h-4 w-4" />
-                Click Photo
-              </Button>
-              <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                <FileUp className="mr-2 h-4 w-4" />
-                Upload PDF
-              </Button>
-              <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" />
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <Button type="button" variant="outline" onClick={() => setShowCamera(true)}>
+                  <Camera className="mr-2 h-4 w-4" />
+                  Click Photo
+                </Button>
+                <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                  <FileUp className="mr-2 h-4 w-4" />
+                  Upload PDF
+                </Button>
+                <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" />
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Link className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <Input placeholder="Or paste a link (e.g., Google Doc, GitHub)" className="pl-9" />
+              </div>
             </div>
         )}
 
         <DialogFooter>
-          <Button type="submit" disabled={isSubmitting || (!capturedImage && !fileInputRef.current?.files?.length) || !assignmentName}>
+          <Button type="submit" disabled={isSubmitting || (!capturedImage && !fileSelected) || !assignmentName}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
