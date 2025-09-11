@@ -220,7 +220,8 @@ export default function ComposeLeaveRequestPage() {
                 <div className="grid grid-cols-2 gap-4">
                     <GeneratePreviewButton />
                     <Button type="button" onClick={handleFinalSubmit} className="w-full">
-                        <Send className="mr-2 h-4 w-4" /> Send Leave Request
+                        <Send className="mr-2 h-4 w-4" />
+                        {proxy ? 'Send Proxy Request' : 'Send Leave Request'}
                     </Button>
                 </div>
             </form>
