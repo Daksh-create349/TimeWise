@@ -21,6 +21,8 @@ interface TimetableContextType {
   schedule: Schedule;
   setSchedule: (schedule: Schedule) => void;
   getTodaysSchedule: () => any[];
+  absentClasses: string[];
+  toggleAbsence: (subject: string) => void;
 }
 
 const TimetableContext = createContext<TimetableContextType | undefined>(undefined);
@@ -66,6 +68,7 @@ const initialSchedule: Schedule = {
 
 export const TimetableProvider = ({ children }: { children: ReactNode }) => {
   const [schedule, setSchedule] = useState<Schedule>(initialSchedule);
+  const [absentClasses, setAbsentClasses] = useState<string[]>([]);
 
   const getTodaysSchedule = useCallback(() => {
     const today = format(new Date(), 'EEEE'); // e.g., "Monday"
@@ -97,9 +100,17 @@ export const TimetableProvider = ({ children }: { children: ReactNode }) => {
     return todaysClasses as any[];
   }, [schedule]);
 
+  const toggleAbsence = (subject: string) => {
+    setAbsentClasses(prev => 
+      prev.includes(subject)
+        ? prev.filter(s => s !== subject)
+        : [...prev, subject]
+    );
+  };
+
 
   return (
-    <TimetableContext.Provider value={{ schedule, setSchedule, getTodaysSchedule }}>
+    <TimetableContext.Provider value={{ schedule, setSchedule, getTodaysSchedule, absentClasses, toggleAbsence }}>
       {children}
     </TimetableContext.Provider>
   );

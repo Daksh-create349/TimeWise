@@ -2,49 +2,36 @@
 "use client";
 
 import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { BookOpen, Briefcase, Calendar, Clock, GraduationCap, Mail, Phone, Users } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import UpcomingEventsCard from "@/components/dashboard/faculty/upcoming-events-card";
+import { useTimetable } from '@/context/TimetableContext';
+import { useToast } from '@/hooks/use-toast';
 
-const facultyProfile = {
-    name: "Dr. Evelyn Reed",
-    title: "Associate Professor",
-    department: "Engineering",
-    email: "evelyn.reed@university.edu",
-    researchArea: "Applied Engineering & Research",
-    since: "Since August 2018",
-    employeeId: "EMP-CS-001",
-    office: "Engineering Building, Room 205",
-    phone: "+1 (555) 123-4567",
-    avatar: "https://picsum.photos/seed/faculty1/200/200"
-};
-
-const overviewStats = [
-    { label: "Classes Today", value: "4", icon: BookOpen, color: "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300" },
-    { label: "Total Students", value: "143", icon: Users, color: "bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-300" },
-    { label: "Teaching Hours", value: "6h", icon: Clock, color: "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400" },
-    { label: "Office Hours", value: "2", icon: Briefcase, color: "bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400" },
-];
-
-const schedule = [
-    { time: "9:00 AM", subject: "Mathematics", room: "Room 101", students: 45 },
-    { time: "11:00 AM", subject: "Advanced Calculus", room: "Room 203", students: 35 },
-    { time: "2:00 PM", subject: "Statistics", room: "Room 105", students: 38 },
+const scheduleData = [
+    { time: "9:00 AM - 11:00 AM", subject: "Mathematics", room: "Room 101", students: 45 },
+    { time: "11:00 AM - 1:00 PM", subject: "Advanced Calculus", room: "Room 203", students: 35 },
+    { time: "2:00 PM - 4:00 PM", subject: "Statistics", room: "Room 105", students: 38 },
 ];
 
 export default function FacultyDashboardPage() {
-  const [attendance, setAttendance] = React.useState(schedule.map(() => true));
+  const { absentClasses, toggleAbsence } = useTimetable();
+  const { toast } = useToast();
 
-  const handleAttendanceChange = (checked: boolean, index: number) => {
-    const newAttendance = [...attendance];
-    newAttendance[index] = checked;
-    setAttendance(newAttendance);
+  const handleAttendanceChange = (checked: boolean, subject: string) => {
+    const isAbsent = !checked;
+    toggleAbsence(subject);
+
+    if (isAbsent) {
+      toast({
+        title: "Notification Sent",
+        description: `Students in ${subject} have been notified of your absence.`,
+      });
+    }
   };
 
   return (
@@ -58,13 +45,11 @@ export default function FacultyDashboardPage() {
                     </Link>
                 </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {overviewStats.map(stat => (
-                    <div key={stat.label} className={`p-4 rounded-lg flex flex-col items-center justify-center text-center ${stat.color}`}>
-                        <div className="text-3xl font-bold">{stat.value}</div>
-                        <div className="text-sm font-medium">{stat.label}</div>
-                    </div>
-                ))}
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard label="Classes Today" value="3" />
+                <StatCard label="Total Students" value="118" />
+                <StatCard label="Teaching Hours" value="6h" />
+                <StatCard label="Office Hours" value="2" />
             </CardContent>
         </Card>
 
@@ -75,31 +60,36 @@ export default function FacultyDashboardPage() {
                         <Calendar className="w-6 h-6" /> Today's Schedule & Attendance
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                        Toggle your availability for each class. Marking absent will notify students and prompt you to send a leave request.
+                        Toggle your availability for each class. Marking absent will notify students.
                     </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {schedule.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
-                            <div className="flex items-center gap-4">
-                                <div className="font-semibold text-primary w-20">{item.time}</div>
-                                <div>
-                                    <p className="font-bold">{item.subject}</p>
-                                    <p className="text-sm text-muted-foreground">{item.room} &middot; {item.students} students</p>
+                    {scheduleData.map((item, index) => {
+                        const isAbsent = absentClasses.includes(item.subject);
+                        const isPresent = !isAbsent;
+
+                        return (
+                            <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
+                                <div className="flex items-center gap-4">
+                                    <div className="font-semibold text-primary w-28">{item.time}</div>
+                                    <div>
+                                        <p className="font-bold">{item.subject}</p>
+                                        <p className="text-sm text-muted-foreground">{item.room} &middot; {item.students} students</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Label htmlFor={`attendance-${index}`} className={`text-sm font-medium ${isPresent ? 'text-green-600' : 'text-red-600'}`}>
+                                        {isPresent ? 'Present' : 'Absent'}
+                                    </Label>
+                                    <Switch 
+                                        id={`attendance-${index}`} 
+                                        checked={isPresent}
+                                        onCheckedChange={(checked) => handleAttendanceChange(checked, item.subject)}
+                                    />
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Label htmlFor={`attendance-${index}`} className={`text-sm font-medium ${attendance[index] ? 'text-green-600' : 'text-red-600'}`}>
-                                    {attendance[index] ? 'Present' : 'Absent'}
-                                </Label>
-                                <Switch 
-                                    id={`attendance-${index}`} 
-                                    checked={attendance[index]}
-                                    onCheckedChange={(checked) => handleAttendanceChange(checked, index)}
-                                />
-                            </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </CardContent>
             </Card>
 
@@ -107,4 +97,14 @@ export default function FacultyDashboardPage() {
         </div>
       </div>
   );
+}
+
+
+function StatCard({ label, value }: { label: string, value: string }) {
+    return (
+        <div className="p-4 rounded-lg bg-primary/10 text-center">
+            <div className="text-3xl font-bold text-primary">{value}</div>
+            <div className="text-sm font-medium text-muted-foreground">{label}</div>
+        </div>
+    )
 }
