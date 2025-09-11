@@ -18,6 +18,7 @@ import {
   BookCheck,
   BarChart3,
   Bell,
+  UserCheck,
 } from 'lucide-react';
 
 import {
@@ -59,6 +60,7 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
     { href: '/dashboard/faculty/assignments', label: 'Assignments', icon: FileText },
     { href: '/dashboard/faculty/timetable', label: 'Timetable Generator', icon: Settings },
     { href: '/dashboard/faculty/leave', label: 'Leave Request', icon: CalendarOff },
+    { href: '/dashboard/faculty/leave', label: 'Proxy', icon: UserCheck },
     { href: '/dashboard/faculty/calendar', label: 'Calendar', icon: Calendar },
     { href: '/dashboard/faculty/notifications', label: 'Notifications', icon: Bell },
     { href: '/dashboard/faculty/reports', label: 'Reports', icon: BarChart3 },
@@ -78,10 +80,10 @@ export default function MainNav({ isMobile = false }: MainNavProps) {
 
       <SidebarMenu>
         {menuItems.map((item) => (
-          <SidebarMenuItem key={item.href}>
+          <SidebarMenuItem key={item.href + item.label}>
             <SidebarMenuButton
               asChild
-              isActive={item.exact ? pathname === item.href : pathname.startsWith(item.href) && !item.exact}
+              isActive={pathname === item.href}
               tooltip={item.label}
             >
               <Link href={item.href}>
