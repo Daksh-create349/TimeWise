@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 import {config} from 'dotenv';
 
@@ -45,6 +46,12 @@ const nextConfig: NextConfig = {
        {
         protocol: 'https',
         hostname: 'api.qrserver.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
         port: '',
         pathname: '/**',
       }
