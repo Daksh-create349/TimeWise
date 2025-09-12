@@ -2,8 +2,8 @@
 {
   "about": {
     "student_dashboard": {
-      "url": "https://picsum.photos/seed/about1/1200/800",
-      "hint": "dashboard analytics"
+      "url": "https://storage.googleapis.com/aifirebase/sc-bde531a7-e039-4217-a068-1599a31e84a2.png",
+      "hint": "student dashboard"
     },
     "faculty_dashboard": {
       "url": "https://picsum.photos/seed/about2/1200/800",
