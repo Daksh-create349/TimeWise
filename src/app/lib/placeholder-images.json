@@ -1,0 +1,13 @@
+
+{
+  "about": {
+    "student_dashboard": {
+      "url": "https://picsum.photos/seed/about1/1200/800",
+      "hint": "dashboard analytics"
+    },
+    "faculty_dashboard": {
+      "url": "https://picsum.photos/seed/about2/1200/800",
+      "hint": "timetable schedule"
+    }
+  }
+}

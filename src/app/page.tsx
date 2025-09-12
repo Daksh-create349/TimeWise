@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import Logo from '@/components/logo';
 import Image from 'next/image';
@@ -48,6 +48,12 @@ export default function PortalPage() {
           imageHint="university professor"
         />
       </div>
+       <div className="mt-12 z-10">
+          <Link href="/about" className="text-white/80 hover:text-white transition-colors flex items-center gap-2">
+            <Info className="w-5 h-5" />
+            About the App
+          </Link>
+        </div>
     </main>
   );
 }
