@@ -1,15 +1,15 @@
 
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useRef } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Download, ExternalLink, Loader2 } from "lucide-react";
+import { CreditCard, Download, ExternalLink, Loader2, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import DueDate from "@/components/dashboard/due-date";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { generateReceipt, GenerateReceiptInput } from "@/ai/flows/generate-receipt-flow";
 import { useSearchParams } from "next/navigation";
 import PaymentDialog from "@/components/dashboard/payment-dialog";
@@ -50,6 +50,8 @@ function FeesPageContent() {
   const [feeSummary, setFeeSummary] = useState(initialFeeSummary);
   const [feeBreakdown, setFeeBreakdown] = useState(initialFeeBreakdown);
   const [paymentHistory, setPaymentHistory] = useState(initialPaymentHistory);
+
+  const receiptRef = useRef<HTMLDivElement>(null);
 
 
   const handleDownload = async (payment: PaymentHistory) => {
@@ -118,6 +120,31 @@ function FeesPageContent() {
         });
 
     }, 2000);
+  };
+  
+  const handlePrint = () => {
+    const printContents = receiptRef.current?.innerHTML;
+    if (printContents) {
+      const printWindow = window.open('', '_blank');
+      printWindow?.document.write(`
+        <html>
+          <head>
+            <title>Print Receipt</title>
+            <style>
+              body { font-family: monospace; line-height: 1.6; }
+              pre { white-space: pre-wrap; }
+            </style>
+          </head>
+          <body>
+            ${printContents}
+          </body>
+        </html>
+      `);
+      printWindow?.document.close();
+      printWindow?.focus();
+      printWindow?.print();
+      printWindow?.close();
+    }
   };
 
 
@@ -251,10 +278,16 @@ function FeesPageContent() {
             </DialogDescription>
           </DialogHeader>
           {generatedReceipt && (
-            <div className="mt-4 bg-muted/50 p-4 rounded-md border">
+            <div ref={receiptRef} className="mt-4 bg-muted/50 p-4 rounded-md border">
                 <pre className="whitespace-pre-wrap text-sm font-mono">{generatedReceipt}</pre>
             </div>
           )}
+           <DialogFooter>
+                <Button variant="outline" onClick={handlePrint}>
+                    <Printer className="mr-2 h-4 w-4" />
+                    Print
+                </Button>
+            </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
@@ -268,3 +301,5 @@ export default function FeesPage() {
         </Suspense>
     )
 }
+
+    
