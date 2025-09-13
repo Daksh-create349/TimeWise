@@ -12,6 +12,16 @@ const features = [
     title: 'Dynamic Content Generation',
     description: 'Faculty can generate syllabi, lesson plans, and course content with a single click, powered by generative AI.',
   },
+  {
+    icon: <Calendar className="h-6 w-6" />,
+    title: 'Smart Scheduling',
+    description: 'Automate timetable creation with AI, balancing faculty preferences and resource availability effortlessly.',
+  },
+  {
+    icon: <GraduationCap className="h-6 w-6" />,
+    title: 'AI-Powered Assistance',
+    description: 'Students receive personalized course suggestions and learning resources based on their academic profile.',
+  },
 ];
 
 
@@ -69,10 +79,10 @@ export default function AboutPage() {
               TimeWise is an integrated platform designed to enhance the educational journey by leveraging the power of AI for both students and faculty.
             </p>
           </div>
-          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-1 lg:gap-x-16 lg:gap-y-16 lg:place-items-center">
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-3 lg:gap-x-16 lg:gap-y-16">
               {features.map((feature, index) => (
-                <div key={feature.title} className={`pl-12 opacity-0 fade-in-delay-${index} max-w-lg`}>
+                <div key={feature.title} className="relative pl-16">
                   <dt className="text-base font-semibold leading-7">
                     <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                       {feature.icon}
