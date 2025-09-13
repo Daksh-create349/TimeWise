@@ -32,7 +32,7 @@ const techStack = [
 ];
 
 export default function AboutPage() {
-  const { student_dashboard, faculty_dashboard } = imageData.about;
+  const { faculty_dashboard } = imageData.about;
 
   return (
     <div className="bg-background text-foreground min-h-screen">
@@ -108,8 +108,14 @@ export default function AboutPage() {
                         Access a personalized dashboard with your schedule, assignments, and grades. Get AI-driven course suggestions tailored to your academic profile and explore topics with AI-curated learning resources.
                     </p>
                 </div>
-                <div className="opacity-0 fade-in-delay-1">
-                    <Image src={student_dashboard.url} alt="Student Dashboard" width={1200} height={800} className="rounded-xl shadow-2xl" data-ai-hint={student_dashboard.hint} />
+                <div className="opacity-0 fade-in-delay-1 rounded-xl shadow-2xl overflow-hidden">
+                   <video
+                      src="https://cdn.pixabay.com/video/2020/12/10/58369-487442113_large.mp4"
+                      autoPlay
+                      loop
+                      muted
+                      className="w-full h-full object-cover"
+                    />
                 </div>
             </div>
 

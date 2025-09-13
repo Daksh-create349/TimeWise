@@ -1,10 +1,6 @@
 
 {
   "about": {
-    "student_dashboard": {
-      "url": "https://picsum.photos/seed/about1/1200/800",
-      "hint": "student dashboard"
-    },
     "faculty_dashboard": {
       "url": "https://picsum.photos/seed/about2/1200/800",
       "hint": "timetable schedule"
