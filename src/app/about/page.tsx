@@ -110,7 +110,7 @@ export default function AboutPage() {
                 </div>
                 <div className="relative opacity-0 fade-in-delay-1 rounded-xl shadow-2xl overflow-hidden h-96">
                    <video
-                      src="https://cdn.pixabay.com/video/2023/11/29/189738-888998075_large.mp4"
+                      src="https://cdn.pixabay.com/video/2019/08/29/26534-358942203_large.mp4"
                       autoPlay
                       loop
                       muted
@@ -159,5 +159,3 @@ export default function AboutPage() {
     </div>
   );
 }
-
-    
