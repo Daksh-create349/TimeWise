@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import UpcomingEventsCard from "@/components/dashboard/faculty/upcoming-events-card";
 import { useTimetable } from '@/context/TimetableContext';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import AttendanceTakerDialog from '@/components/dashboard/faculty/attendance-taker-dialog';
+import AttendanceTakerDialog from './attendance-taker-dialog';
 
 
 const scheduleData = [
