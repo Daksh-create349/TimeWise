@@ -6,7 +6,7 @@ import { generateAttendanceQuestion } from '@/ai/flows/generate-attendance-quest
 import { Button } from '@/components/ui/button';
 import { DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Sparkles, QrCode, RefreshCw, XCircle, CheckCircle } from 'lucide-react';
+import { Loader2, Sparkles, QrCode, RefreshCw, XCircle, Bluetooth, BluetoothConnected } from 'lucide-react';
 import Image from 'next/image';
 import { useAttendance } from '@/context/AttendanceContext';
 import { Input } from '@/components/ui/input';
@@ -20,11 +20,33 @@ interface QuestionState {
   question: string;
 }
 
+// Mocking the GATT server for demo purposes on the faculty side.
+// In a real scenario with two devices, the faculty device would actually run this.
+const mockGattServer = {
+  serviceUuid: '4fafc201-1fb5-459e-8fcc-c5c9c331914b', // A standard service UUID for our app
+  questionCharacteristicUuid: 'beb5483e-36e1-4688-b7f5-ea07361b26a8',
+  async startAdvertising(question: string) {
+    if (typeof navigator !== 'undefined' && navigator.bluetooth) {
+       try {
+        // We can't *actually* advertise from a browser, this is a limitation.
+        // We log it to show what would happen. The student device will scan for this UUID.
+        console.log(`Pretending to advertise Bluetooth service: ${this.serviceUuid}`);
+        console.log(`With question characteristic value: "${question}"`);
+      } catch (error) {
+        console.error("Web Bluetooth 'advertising' simulation failed:", error);
+      }
+    } else {
+      console.log("Web Bluetooth not supported, cannot simulate advertising.");
+    }
+  },
+};
+
+
 export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialogProps) {
   const [questionState, setQuestionState] = useState<QuestionState | null>(null);
   const [answer, setAnswer] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [isSessionActive, setIsSessionActive] = useState(false);
+  const [isSessionActive, setIsSessionActive] = useState<"qr" | "bluetooth" | null>(null);
   const { toast } = useToast();
   const { startAttendance, closeAttendance } = useAttendance();
   
@@ -34,7 +56,7 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
     setIsLoading(true);
     setQuestionState(null);
     setAnswer('');
-    setIsSessionActive(false);
+    setIsSessionActive(null);
     try {
       const result = await generateAttendanceQuestion({ subject });
       setQuestionState(result);
@@ -55,7 +77,7 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subject]);
 
-  const handleStartSession = () => {
+  const handleStartSession = (type: "qr" | "bluetooth") => {
       if (!questionState || !answer) {
           toast({
               variant: 'destructive',
@@ -64,17 +86,21 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
           });
           return;
       }
+      if (type === 'bluetooth') {
+        mockGattServer.startAdvertising(questionState.question);
+      }
+
       startAttendance({ subject, question: questionState.question, answer });
-      setIsSessionActive(true);
+      setIsSessionActive(type);
       toast({
-          title: "Attendance Session Started",
-          description: "The question is now live for students.",
+          title: `Attendance Session Started (${type})`,
+          description: `The session is now live for students to join.`,
       });
   }
 
   const handleCloseSession = () => {
       closeAttendance();
-      setIsSessionActive(false);
+      setIsSessionActive(null);
       toast({
           title: "Attendance Session Closed",
           description: "Students can no longer submit answers.",
@@ -101,7 +127,7 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
           </div>
         )}
 
-        {questionState && (
+        {questionState && !isSessionActive && (
           <div className='space-y-4'>
             <p className="text-2xl font-semibold font-headline">"{questionState.question}"</p>
              <div className="space-y-2 text-left">
@@ -111,13 +137,13 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
                     placeholder="Enter the correct answer here"
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    disabled={isSessionActive}
+                    disabled={!!isSessionActive}
                 />
             </div>
           </div>
         )}
 
-        {isSessionActive && (
+        {isSessionActive === 'qr' && (
           <>
             <div className='flex justify-center'>
                 <Image 
@@ -128,17 +154,24 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
                     className='rounded-lg border p-1'
                 />
             </div>
-
             <div className='text-xs text-muted-foreground space-y-1'>
                 <p>Students can scan the QR code or go to:</p>
                 <p className='font-mono text-primary underline'>{studentUrl}</p>
             </div>
           </>
         )}
+        
+        {isSessionActive === 'bluetooth' && (
+            <div className='flex flex-col items-center gap-4 text-muted-foreground h-40 justify-center'>
+                <BluetoothConnected className="h-12 w-12 text-primary animate-pulse" />
+                <p className='font-semibold text-primary'>Bluetooth Session Active</p>
+                <p className='text-sm'>Broadcasting attendance service. Students can now connect.</p>
+            </div>
+        )}
       </div>
 
-      <DialogFooter className="sm:justify-between gap-2">
-         <Button variant="outline" onClick={fetchQuestion} disabled={isLoading || isSessionActive}>
+      <DialogFooter className="sm:justify-between gap-2 flex-wrap">
+         <Button variant="outline" onClick={fetchQuestion} disabled={isLoading || !!isSessionActive}>
             <RefreshCw className="mr-2 h-4 w-4" />
             New Question
         </Button>
@@ -148,10 +181,16 @@ export default function AttendanceTakerDialog({ subject }: AttendanceTakerDialog
                 End Session
             </Button>
         ) : (
-            <Button type="button" onClick={handleStartSession} disabled={isLoading || !answer}>
-                <CheckCircle className="mr-2 h-4 w-4" />
-                Start Session
+            <div className='flex gap-2'>
+              <Button type="button" onClick={() => handleStartSession('bluetooth')} disabled={isLoading || !answer}>
+                <Bluetooth className="mr-2 h-4 w-4" />
+                Start Bluetooth Session
             </Button>
+            <Button type="button" onClick={() => handleStartSession('qr')} disabled={isLoading || !answer}>
+                <QrCode className="mr-2 h-4 w-4" />
+                Start QR Code Session
+            </Button>
+            </div>
         )}
       </DialogFooter>
     </>
