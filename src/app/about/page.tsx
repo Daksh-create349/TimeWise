@@ -108,14 +108,15 @@ export default function AboutPage() {
                         Access a personalized dashboard with your schedule, assignments, and grades. Get AI-driven course suggestions tailored to your academic profile and explore topics with AI-curated learning resources.
                     </p>
                 </div>
-                <div className="opacity-0 fade-in-delay-1 rounded-xl shadow-2xl overflow-hidden">
+                <div className="relative opacity-0 fade-in-delay-1 rounded-xl shadow-2xl overflow-hidden h-96">
                    <video
-                      src="https://streamable.com/l/2sv9nl/video.mp4"
+                      src="https://cdn.pixabay.com/video/2023/11/29/189738-888998075_large.mp4"
                       autoPlay
                       loop
                       muted
-                      className="w-full h-full object-cover"
+                      className="absolute top-0 left-0 w-full h-full object-cover -z-10"
                     />
+                    <div className="absolute inset-0 bg-black/30" />
                 </div>
             </div>
 
@@ -158,3 +159,5 @@ export default function AboutPage() {
     </div>
   );
 }
+
+    
