@@ -79,8 +79,8 @@ export default function AboutPage() {
               TimeWise is an integrated platform designed to enhance the educational journey by leveraging the power of AI for both students and faculty.
             </p>
           </div>
-          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-3 lg:gap-y-16">
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-x-16 lg:gap-y-16">
               {features.map((feature, index) => (
                 <div key={feature.title} className={`relative pl-12 opacity-0 fade-in-delay-${index}`}>
                   <dt className="text-base font-semibold leading-7">
