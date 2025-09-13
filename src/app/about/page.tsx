@@ -114,7 +114,7 @@ export default function AboutPage() {
                       autoPlay
                       loop
                       muted
-                      className="absolute top-0 left-0 w-full h-full object-cover -z-10 rounded-xl"
+                      className="absolute top-0 left-0 w-full h-full object-cover rounded-xl"
                     />
                     <div className="absolute inset-0 bg-black/30 rounded-xl" />
                 </div>
