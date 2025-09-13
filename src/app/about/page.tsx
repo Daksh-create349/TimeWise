@@ -8,19 +8,14 @@ import imageData from '@/app/lib/placeholder-images.json';
 
 const features = [
   {
-    icon: <Palette className="h-6 w-6" />,
-    title: 'AI-Powered Assistance',
-    description: 'From course suggestions to timetable generation, our AI streamlines academic tasks for both students and faculty.',
+    icon: <Bot className="h-6 w-6" />,
+    title: 'Dynamic Content Generation',
+    description: 'Faculty can generate syllabi, lesson plans, and course content with a single click, powered by generative AI.',
   },
   {
     icon: <Calendar className="h-6 w-6" />,
     title: 'Smart Scheduling',
     description: 'Students get personalized timetables, while faculty can generate and manage schedules with AI to avoid conflicts.',
-  },
-  {
-    icon: <Bot className="h-6 w-6" />,
-    title: 'Dynamic Content Generation',
-    description: 'Faculty can generate syllabi, lesson plans, and course content with a single click, powered by generative AI.',
   },
 ];
 
