@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,13 +11,15 @@ import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type Status = "idle" | "scanning" | "showingDevices" | "connecting" | "connected" | "error";
+type MockDevice = { name: string; id: string };
 
-const mockDevices = [
+const allMockDevices: MockDevice[] = [
     { name: "Redmi Note 12", id: "dev1" },
-    { name: "Bould Airbass", id: "dev2" },
+    { name: "Boult Airbass", id: "dev2" },
     { name: "Samsung S25", id: "dev3" },
     { name: "iPhone 14", id: "dev4" },
 ];
+
 
 export default function BluetoothAttendanceCard() {
   const { activeSession, submitAnswer, presentStudents } = useAttendance();
@@ -26,12 +28,19 @@ export default function BluetoothAttendanceCard() {
 
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [discoveredDevices, setDiscoveredDevices] = useState<MockDevice[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   
   // Effect to reset the card's state if the session changes
   useEffect(() => {
     setStatus("idle");
     setError(null);
     setAnswer("");
+    setDiscoveredDevices([]);
+    if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSession]);
 
   if (!activeSession) {
@@ -42,12 +51,26 @@ export default function BluetoothAttendanceCard() {
 
   const handleStartScan = () => {
     setStatus("scanning");
-    setTimeout(() => {
-        setStatus("showingDevices");
-    }, 2000); // Simulate 2 seconds of scanning
+    setDiscoveredDevices([]);
+
+    let deviceIndex = 0;
+    intervalRef.current = setInterval(() => {
+        if (deviceIndex < allMockDevices.length) {
+            setDiscoveredDevices(prev => [...prev, allMockDevices[deviceIndex]]);
+            deviceIndex++;
+        } else {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+            setStatus("showingDevices");
+        }
+    }, 2000);
   };
 
   const handleDeviceSelect = (deviceName: string) => {
+    if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+    }
     setStatus("connecting");
     toast({ title: `Connecting to ${deviceName}...` });
     setTimeout(() => {
@@ -91,21 +114,19 @@ export default function BluetoothAttendanceCard() {
         case "idle":
             return <Button className="w-full" onClick={handleStartScan}><Bluetooth className="mr-2 h-4 w-4"/>Connect via Bluetooth</Button>;
         case "scanning":
-            return (
-                <div className="flex flex-col items-center justify-center h-24 text-blue-700 dark:text-blue-400">
-                    <BluetoothSearching className="h-10 w-10 animate-pulse" />
-                    <p className="mt-2 font-semibold">Scanning for faculty device...</p>
-                </div>
-            );
         case "showingDevices":
             return (
                 <div className="space-y-2">
-                    <p className="text-sm font-medium text-center text-muted-foreground">Select faculty device:</p>
-                    {mockDevices.map(device => (
+                    <div className="flex items-center justify-center gap-2 text-blue-700 dark:text-blue-400 mb-4">
+                        <BluetoothSearching className="h-5 w-5 animate-pulse" />
+                        <p className="font-semibold">Scanning for faculty device...</p>
+                    </div>
+                    {discoveredDevices.map(device => (
                         <Button key={device.id} variant="outline" className="w-full justify-start gap-2" onClick={() => handleDeviceSelect(device.name)}>
                            <Smartphone /> {device.name}
                         </Button>
                     ))}
+                    {status === "scanning" && discoveredDevices.length === 0 && <p className="text-center text-sm text-muted-foreground">Searching...</p>}
                 </div>
             );
         case "connecting":
