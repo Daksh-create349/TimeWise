@@ -4,6 +4,10 @@
     "faculty_dashboard": {
       "url": "https://picsum.photos/seed/about2/1200/800",
       "hint": "timetable schedule"
+    },
+    "student_dashboard_video": {
+      "url": "https://cdn.pixabay.com/video/2021/05/03/73007-545277076_large.mp4",
+      "hint": "student learning"
     }
   }
 }
