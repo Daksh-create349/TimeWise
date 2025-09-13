@@ -32,7 +32,7 @@ const techStack = [
 ];
 
 export default function AboutPage() {
-  const { faculty_dashboard, student_dashboard } = imageData.about;
+  const { faculty_dashboard } = imageData.about;
 
   return (
     <div className="bg-background text-foreground min-h-screen">
