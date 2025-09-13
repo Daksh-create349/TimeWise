@@ -39,9 +39,19 @@ export default function BluetoothAttendanceCard() {
     setDiscoveredDevices([]);
     if (intervalRef.current) {
         clearInterval(intervalRef.current);
+        intervalRef.current = null;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSession]);
+
+  useEffect(() => {
+    // Cleanup interval on component unmount
+    return () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+    }
+  }, []);
 
   if (!activeSession) {
     return null;
@@ -55,21 +65,28 @@ export default function BluetoothAttendanceCard() {
 
     let deviceIndex = 0;
     intervalRef.current = setInterval(() => {
-        if (deviceIndex < allMockDevices.length) {
-            setDiscoveredDevices(prev => [...prev, allMockDevices[deviceIndex]]);
-            deviceIndex++;
-        } else {
+        setDiscoveredDevices(prev => {
+            const nextDevice = allMockDevices[deviceIndex];
+            if (nextDevice) {
+                deviceIndex++;
+                return [...prev, nextDevice];
+            }
+            
+            // If no next device, stop the interval
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
+                intervalRef.current = null;
             }
             setStatus("showingDevices");
-        }
+            return prev;
+        });
     }, 2000);
   };
 
   const handleDeviceSelect = (deviceName: string) => {
     if (intervalRef.current) {
         clearInterval(intervalRef.current);
+        intervalRef.current = null;
     }
     setStatus("connecting");
     toast({ title: `Connecting to ${deviceName}...` });
