@@ -5,7 +5,19 @@ import {config} from 'dotenv';
 config();
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'bluetooth=*',
+          },
+        ],
+      },
+    ];
+  },
   experimental: {
     serverActions: {
       maxDuration: 120, // 2 minutes
