@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { HelpCircle, Send, CheckCircle, Bluetooth, Loader2 } from "lucide-react";
+import { Send, CheckCircle, Bluetooth, Loader2, BluetoothSearching } from "lucide-react";
 import { useAttendance } from "@/context/AttendanceContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -31,7 +31,7 @@ export default function BluetoothAttendanceCard() {
             title: "Connected!",
             description: `Successfully connected to ${activeSession.subject} attendance session.`,
         });
-    }, 1500); // Simulate connection delay
+    }, 2500); // Simulate connection delay
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -69,14 +69,15 @@ export default function BluetoothAttendanceCard() {
           </div>
       </CardHeader>
       <CardContent>
-        {!isConnected ? (
+        {isConnecting ? (
+            <div className="flex flex-col items-center justify-center h-24 text-blue-700 dark:text-blue-400">
+                <BluetoothSearching className="h-10 w-10 animate-pulse" />
+                <p className="mt-2 font-semibold">Scanning for faculty device...</p>
+            </div>
+        ) : !isConnected ? (
             <Button className="w-full" onClick={handleConnect} disabled={isConnecting}>
-                {isConnecting ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                ) : (
-                    <Bluetooth className="mr-2 h-4 w-4"/>
-                )}
-                {isConnecting ? "Connecting..." : "Connect via Bluetooth"}
+                <Bluetooth className="mr-2 h-4 w-4"/>
+                Connect via Bluetooth
             </Button>
         ) : isPresent ? (
           <div className="flex items-center justify-center gap-2 text-lg font-semibold text-green-600 bg-green-100 dark:bg-green-900/50 p-4 rounded-md">
