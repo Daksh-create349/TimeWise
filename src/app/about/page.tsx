@@ -36,7 +36,7 @@ export default function AboutPage() {
 
   return (
     <div className="bg-background text-foreground min-h-screen">
-      <div className="relative isolate overflow-hidden">
+      <div className="relative isolate">
         <div className="absolute top-0 left-0 w-full h-full -z-20">
             <video
             src="https://cdn.pixabay.com/video/2021/05/03/73007-545277076_large.mp4"
