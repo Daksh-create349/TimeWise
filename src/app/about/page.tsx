@@ -110,7 +110,7 @@ export default function AboutPage() {
                 </div>
                 <div className="opacity-0 fade-in-delay-1 rounded-xl shadow-2xl overflow-hidden">
                    <video
-                      src="https://cdn.pixabay.com/video/2020/12/10/58369-487442113_large.mp4"
+                      src="https://streamable.com/l/2sv9nl/video.mp4"
                       autoPlay
                       loop
                       muted
