@@ -1,7 +1,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Bot, Calendar, Palette, GraduationCap, User, Cpu, Wind } from 'lucide-react';
+import { ArrowLeft, Bot, Calendar, Palette, GraduationCap, User, Cpu, Wind, PaletteIcon } from 'lucide-react';
 import Logo from '@/components/logo';
 import { Card } from '@/components/ui/card';
 import imageData from '@/app/lib/placeholder-images.json';
@@ -40,7 +40,7 @@ export default function AboutPage() {
       <div className="relative isolate">
         <div className="absolute top-0 left-0 w-full h-full -z-20">
             <video
-            src="https://cdn.pixabay.com/video/2021/05/03/73007-545277076_large.mp4"
+            src="https://cdn.pixabay.com/video/2022/09/20/131990-751915304_large.mp4"
             autoPlay
             loop
             muted
