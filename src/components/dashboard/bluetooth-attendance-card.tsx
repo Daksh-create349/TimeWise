@@ -1,20 +1,23 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, CheckCircle, Bluetooth, Loader2, BluetoothSearching, XCircle } from "lucide-react";
+import { Send, CheckCircle, Bluetooth, Loader2, BluetoothSearching, XCircle, Smartphone } from "lucide-react";
 import { useAttendance } from "@/context/AttendanceContext";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const ATTENDANCE_SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
-const QUESTION_CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+type Status = "idle" | "scanning" | "showingDevices" | "connecting" | "connected" | "error";
 
-
-type Status = "idle" | "scanning" | "connecting" | "connected" | "error";
+const mockDevices = [
+    { name: "Redmi Note 12", id: "dev1" },
+    { name: "Bould Airbass", id: "dev2" },
+    { name: "Samsung S25", id: "dev3" },
+    { name: "iPhone 14", id: "dev4" },
+];
 
 export default function BluetoothAttendanceCard() {
   const { activeSession, submitAnswer, presentStudents } = useAttendance();
@@ -23,68 +26,34 @@ export default function BluetoothAttendanceCard() {
 
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
-  const [sessionQuestion, setSessionQuestion] = useState<string | null>(null);
   
+  // Effect to reset the card's state if the session changes
+  useEffect(() => {
+    setStatus("idle");
+    setError(null);
+    setAnswer("");
+  }, [activeSession]);
+
   if (!activeSession) {
-    return null; // Don't show the card if there's no active session
+    return null;
   }
 
   const isPresent = presentStudents.includes(activeSession.subject);
 
-  const handleConnect = async () => {
-    if (!navigator.bluetooth) {
-      setError("Web Bluetooth is not available on this browser. Please use Chrome on Desktop or Android.");
-      setStatus("error");
-      return;
-    }
-
+  const handleStartScan = () => {
     setStatus("scanning");
-    setError(null);
+    setTimeout(() => {
+        setStatus("showingDevices");
+    }, 2000); // Simulate 2 seconds of scanning
+  };
 
-    try {
-      toast({ title: "Scanning for devices...", description: "Please select the faculty device from the browser prompt." });
-
-      const device = await navigator.bluetooth.requestDevice({
-        filters: [{ services: [ATTENDANCE_SERVICE_UUID] }],
-        optionalServices: [ATTENDANCE_SERVICE_UUID]
-      });
-
-      setStatus("connecting");
-      toast({ title: "Connecting...", description: `Connecting to ${device.name || 'the selected device'}...` });
-      
-      const server = await device.gatt?.connect();
-      if (!server) throw new Error("Could not connect to GATT server.");
-      
-      const service = await server.getPrimaryService(ATTENDANCE_SERVICE_UUID);
-      if (!service) throw new Error("Attendance service not found.");
-
-      const characteristic = await service.getCharacteristic(QUESTION_CHARACTERISTIC_UUID);
-      if (!characteristic) throw new Error("Question characteristic not found.");
-      
-      // In a real scenario, we would read the value. Here we use the context value.
-      // const value = await characteristic.readValue();
-      // const decoder = new TextDecoder('utf-8');
-      // const question = decoder.decode(value);
-      // setSessionQuestion(question);
-      
-      // For this demo, we'll use the question from the context
-      setSessionQuestion(activeSession.question);
-
-      setStatus("connected");
-      toast({ title: "Connected!", description: "Please answer the question to mark your attendance." });
-
-    } catch (err: any) {
-      console.error("Bluetooth connection failed:", err);
-      let errorMessage = "Failed to connect. Please ensure you are close to the faculty device and try again.";
-      if (err.name === 'NotFoundError') {
-        errorMessage = "No advertising device found. Please ask the faculty to start the session.";
-      } else if (err.name === 'NotAllowedError') {
-          errorMessage = "Permission to use Bluetooth was denied."
-      }
-      setError(errorMessage);
-      setStatus("error");
-      toast({ variant: "destructive", title: "Connection Failed", description: errorMessage });
-    }
+  const handleDeviceSelect = (deviceName: string) => {
+    setStatus("connecting");
+    toast({ title: `Connecting to ${deviceName}...` });
+    setTimeout(() => {
+        setStatus("connected");
+        toast({ title: "Connected!", description: "Please answer the question to mark your attendance." });
+    }, 1500); // Simulate 1.5 seconds of connecting
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -120,13 +89,23 @@ export default function BluetoothAttendanceCard() {
 
     switch(status) {
         case "idle":
-            return <Button className="w-full" onClick={handleConnect}><Bluetooth className="mr-2 h-4 w-4"/>Connect via Bluetooth</Button>;
+            return <Button className="w-full" onClick={handleStartScan}><Bluetooth className="mr-2 h-4 w-4"/>Connect via Bluetooth</Button>;
         case "scanning":
             return (
                 <div className="flex flex-col items-center justify-center h-24 text-blue-700 dark:text-blue-400">
                     <BluetoothSearching className="h-10 w-10 animate-pulse" />
                     <p className="mt-2 font-semibold">Scanning for faculty device...</p>
-                    <p className="text-sm">Check browser prompt to select device.</p>
+                </div>
+            );
+        case "showingDevices":
+            return (
+                <div className="space-y-2">
+                    <p className="text-sm font-medium text-center text-muted-foreground">Select faculty device:</p>
+                    {mockDevices.map(device => (
+                        <Button key={device.id} variant="outline" className="w-full justify-start gap-2" onClick={() => handleDeviceSelect(device.name)}>
+                           <Smartphone /> {device.name}
+                        </Button>
+                    ))}
                 </div>
             );
         case "connecting":
@@ -139,7 +118,7 @@ export default function BluetoothAttendanceCard() {
         case "connected":
              return (
               <div>
-                <p className="text-xl text-center font-semibold mb-4 text-primary">"{sessionQuestion}"</p>
+                <p className="text-xl text-center font-semibold mb-4 text-primary">"{activeSession.question}"</p>
                 <form onSubmit={handleSubmit} className="flex items-center gap-2">
                     <Input 
                     type="text" 
@@ -159,7 +138,7 @@ export default function BluetoothAttendanceCard() {
             return (
                 <Alert variant="destructive">
                     <XCircle className="h-4 w-4" />
-                    <AlertTitle>Bluetooth Error</AlertTitle>
+                    <AlertTitle>Simulation Error</AlertTitle>
                     <AlertDescription>{error}</AlertDescription>
                     <Button variant="secondary" size="sm" onClick={() => setStatus("idle")} className="mt-4">Try Again</Button>
                 </Alert>
