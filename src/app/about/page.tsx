@@ -15,7 +15,7 @@ const features = [
   {
     icon: <Calendar className="h-6 w-6" />,
     title: 'Smart Scheduling',
-    description: 'An intelligent, conflict-free timetable that adapts to faculty needs and keeps students informed.',
+    description: 'Students get personalized timetables and faculty can generate them with AI, avoiding conflicts and optimizing resources.',
   },
   {
     icon: <Palette className="h-6 w-6" />,
@@ -23,6 +23,7 @@ const features = [
     description: 'Faculty can generate syllabi, lesson plans, and course content with a single click, powered by generative AI.',
   },
 ];
+
 
 const techStack = [
     { name: 'Next.js', icon: <Wind className="w-5 h-5"/> },
@@ -158,3 +159,4 @@ export default function AboutPage() {
 
     </div>
   );
+}
