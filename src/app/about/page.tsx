@@ -110,7 +110,7 @@ export default function AboutPage() {
                 </div>
                 <div className="relative opacity-0 fade-in-delay-1 rounded-xl shadow-2xl h-96">
                    <video
-                      src="https://cdn.pixabay.com/video/2024/05/23/211732-944754799_large.mp4"
+                      src={student_dashboard_video.url}
                       autoPlay
                       loop
                       muted
