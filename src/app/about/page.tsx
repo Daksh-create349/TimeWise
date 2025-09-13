@@ -131,8 +131,15 @@ export default function AboutPage() {
                         Automate administrative tasks with our AI Timetable Generator. Create comprehensive course content, from syllabi to lesson plans, and manage assignments and attendance with ease.
                     </p>
                 </div>
-                <div className="opacity-0 fade-in-delay-2 lg:order-1">
-                     <Image src={faculty_dashboard.url} alt="Faculty Dashboard" width={1200} height={800} className="rounded-xl shadow-2xl" data-ai-hint={faculty_dashboard.hint}/>
+                <div className="relative opacity-0 fade-in-delay-2 lg:order-1 h-96">
+                     <video
+                      src={faculty_dashboard.url}
+                      autoPlay
+                      loop
+                      muted
+                      className="absolute top-0 left-0 w-full h-full object-cover rounded-xl"
+                    />
+                    <div className="absolute inset-0 bg-black/30 rounded-xl" />
                 </div>
             </div>
         </div>
